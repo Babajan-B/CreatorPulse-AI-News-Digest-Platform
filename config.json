@@ -1,0 +1,139 @@
+{
+  "project_name": "CreatorPulse",
+  "data_sources": [
+    {
+      "name": "DeepMind News & Blog",
+      "type": "rss",
+      "url": "https://www.deepmind.com/blog/rss.xml",
+      "enabled": true,
+      "parameters": {}
+    },
+    {
+      "name": "TechCrunch Generative AI",
+      "type": "rss",
+      "url": "https://techcrunch.com/tag/generative-ai/feed/",
+      "enabled": true,
+      "parameters": {}
+    },
+    {
+      "name": "TechCrunch AI",
+      "type": "rss",
+      "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
+      "enabled": true,
+      "parameters": {}
+    },
+    {
+      "name": "The Gradient",
+      "type": "rss",
+      "url": "https://thegradient.pub/feed/",
+      "enabled": true,
+      "parameters": {}
+    },
+    {
+      "name": "Machine Learning Mastery",
+      "type": "rss",
+      "url": "https://machinelearningmastery.com/blog/feed/",
+      "enabled": true,
+      "parameters": {}
+    },
+    {
+      "name": "Berkeley AI Research (BAIR)",
+      "type": "rss",
+      "url": "https://bair.berkeley.edu/blog/feed.xml",
+      "enabled": true,
+      "parameters": {}
+    },
+    {
+      "name": "AI Trends",
+      "type": "rss",
+      "url": "https://www.aitrends.com/feed/",
+      "enabled": true,
+      "parameters": {}
+    },
+    {
+      "name": "Analytics Vidhya",
+      "type": "rss",
+      "url": "https://www.analyticsvidhya.com/blog/feed/",
+      "enabled": true,
+      "parameters": {}
+    },
+    {
+      "name": "Google Research Blog",
+      "type": "rss",
+      "url": "https://blog.research.google/feeds/posts/default",
+      "enabled": true,
+      "parameters": {}
+    },
+    {
+      "name": "Hugging Face Blog RSS",
+      "type": "rss",
+      "url": "https://huggingface.co/blog/feed.xml",
+      "enabled": true,
+      "parameters": {}
+    },
+    {
+      "name": "VentureBeat AI",
+      "type": "rss",
+      "url": "https://venturebeat.com/category/ai/feed/",
+      "enabled": true,
+      "parameters": {}
+    },
+    {
+      "name": "Wired AI",
+      "type": "rss",
+      "url": "https://www.wired.com/feed/tag/ai/latest/rss",
+      "enabled": true,
+      "parameters": {}
+    },
+    {
+      "name": "ArXiv CS.AI (Research Papers)",
+      "type": "rss",
+      "url": "https://export.arxiv.org/rss/cs.AI",
+      "enabled": false,
+      "parameters": {}
+    },
+    {
+      "name": "ArXiv CS.LG (Machine Learning Papers)",
+      "type": "rss",
+      "url": "https://export.arxiv.org/rss/cs.LG",
+      "enabled": false,
+      "parameters": {}
+    },
+    {
+      "name": "Distill.pub",
+      "type": "rss",
+      "url": "https://distill.pub/rss.xml",
+      "enabled": true,
+      "parameters": {}
+    },
+    {
+      "name": "Import AI Newsletter",
+      "type": "rss",
+      "url": "https://jack-clark.net/feed/",
+      "enabled": true,
+      "parameters": {}
+    },
+    {
+      "name": "Sebastian Raschka Blog",
+      "type": "rss",
+      "url": "https://sebastianraschka.com/rss_feed.xml",
+      "enabled": true,
+      "parameters": {}
+    },
+    {
+      "name": "Andrej Karpathy Blog",
+      "type": "rss",
+      "url": "https://karpathy.github.io/feed.xml",
+      "enabled": true,
+      "parameters": {}
+    },
+    {
+      "name": "CMU Machine Learning Blog",
+      "type": "rss",
+      "url": "https://blog.ml.cmu.edu/feed/",
+      "enabled": true,
+      "parameters": {}
+    }
+  ]
+}
+
