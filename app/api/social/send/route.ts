@@ -1,38 +1,37 @@
 // API Route: Send social media post via email
 import { NextRequest, NextResponse } from 'next/server';
 import { sendEmail } from '@/lib/email-service';
-import { cookies } from 'next/headers';
-import jwt from 'jsonwebtoken';
-import { supabase as supabaseClient } from '@/lib/db-complete';
+import { jwtVerify } from 'jose';
+import { supabase as supabaseClient } from '@/lib/supabase';
 import { format } from 'date-fns';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+const JWT_SECRET = new TextEncoder().encode(
+  process.env.JWT_SECRET || 'your-secret-key-change-this-in-production'
+)
 
 export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+
+async function getUserFromToken(request: NextRequest) {
+  const token = request.cookies.get('auth-token')?.value
+  if (!token) return null
+
+  try {
+    const { payload } = await jwtVerify(token, JWT_SECRET)
+    return payload.userId as string
+  } catch {
+    return null
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {
     // Check authentication
-    const cookieStore = await cookies();
-    const token = cookieStore.get('auth_token');
-
-    if (!token) {
+    const userId = await getUserFromToken(request)
+    
+    if (!userId) {
       return NextResponse.json({
         success: false,
         error: 'Not authenticated. Please login to send emails.'
-      }, { status: 401 });
-    }
-
-    // Verify token
-    let userId: string;
-    try {
-      const decoded = jwt.verify(token.value, JWT_SECRET) as { userId: string };
-      userId = decoded.userId;
-    } catch (error) {
-      return NextResponse.json({
-        success: false,
-        error: 'Invalid authentication token'
       }, { status: 401 });
     }
 
