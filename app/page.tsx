@@ -1,12 +1,14 @@
 "use client"
 
 import { useState, useMemo, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { StatsDashboard } from "@/components/stats-dashboard"
 import { NewsCard } from "@/components/news-card"
 import { AISearchBar } from "@/components/ai-search-bar"
 import { TopicFilter } from "@/components/topic-filter"
 import { IntroPage } from "@/components/intro-page"
 import { PlatformIcons } from "@/components/platform-icons"
+import { TrendingTopics } from "@/components/trending-topics"
 import { toast } from "sonner"
 
 interface Article {
@@ -135,19 +137,34 @@ const mockArticles: Article[] = [
 ]
 
 export default function HomePage() {
+  const router = useRouter()
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null)
   const [showIntro, setShowIntro] = useState(true)
   const [articles, setArticles] = useState<Article[]>(mockArticles)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [sendingDigest, setSendingDigest] = useState(false)
+  const [modeChecked, setModeChecked] = useState(false)
 
+  // Check if user has seen intro
   useEffect(() => {
-    const hasSeenIntro = localStorage.getItem("hasSeenIntro")
-    if (hasSeenIntro) {
-      setShowIntro(false)
+    // Only run on client side
+    if (typeof window !== 'undefined') {
+      const hasSeenIntro = localStorage.getItem("hasSeenIntro")
+      if (hasSeenIntro) {
+        setShowIntro(false)
+        // After intro is completed, check mode preference
+        const preferredMode = localStorage.getItem('preferred_mode')
+        if (!preferredMode) {
+          router.push('/select-mode')
+        } else if (preferredMode === 'science_breakthrough') {
+          router.push('/science')
+        } else {
+          setModeChecked(true)
+        }
+      }
     }
-  }, [])
+  }, [router])
 
   // Fetch real RSS articles
   useEffect(() => {
@@ -182,6 +199,16 @@ export default function HomePage() {
   const handleIntroComplete = () => {
     localStorage.setItem("hasSeenIntro", "true")
     setShowIntro(false)
+    
+    // After intro, check for mode preference
+    const preferredMode = localStorage.getItem('preferred_mode')
+    if (!preferredMode) {
+      router.push('/select-mode')
+    } else if (preferredMode === 'science_breakthrough') {
+      router.push('/science')
+    } else {
+      setModeChecked(true)
+    }
   }
 
   const handleSendDigest = async () => {
@@ -257,6 +284,18 @@ export default function HomePage() {
     activeSources: new Set(articles.map((a) => a.source)).size,
   }
 
+  // Show loading only if we're on client side and checking mode preferences
+  if (typeof window !== 'undefined' && !showIntro && !modeChecked) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <p className="text-white">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
   if (showIntro) {
     return <IntroPage onComplete={handleIntroComplete} />
   }
@@ -304,6 +343,10 @@ export default function HomePage() {
       <div className="mb-8">
         <AISearchBar />
       </div>
+
+
+      {/* Trending Topics from Social Media */}
+      <TrendingTopics />
 
       {/* Stats Dashboard */}
       <div className="mb-8">

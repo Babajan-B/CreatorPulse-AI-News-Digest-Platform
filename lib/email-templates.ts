@@ -9,17 +9,58 @@ interface DigestArticle {
   url: string;
   source: string;
   publishedAt: string;
+  bulletPoints?: string[];
+  hashtags?: string[];
+}
+
+interface DigestEmailOptions {
+  mode?: 'ai_news' | 'science_breakthrough';
+  userName: string;
+  articles: DigestArticle[];
 }
 
 /**
- * Generate daily digest email HTML
+ * Generate daily digest email HTML (legacy function)
  */
 export function generateDailyDigestEmail(articles: DigestArticle[], userName: string) {
+  return generateDualModeDigestEmail({
+    articles,
+    userName,
+    mode: 'ai_news'
+  });
+}
+
+/**
+ * Generate dual-mode digest email HTML
+ */
+export function generateDualModeDigestEmail(options: DigestEmailOptions) {
+  const { articles, userName, mode = 'ai_news' } = options;
+  
+  // Mode-specific styling and content
+  const modeConfig = {
+    ai_news: {
+      title: 'AI News Digest',
+      icon: '🧠',
+      gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      accentColor: '#667eea',
+      summaryLabel: '📝 AI Summary'
+    },
+    science_breakthrough: {
+      title: 'Science Breakthrough Digest',
+      icon: '🔬',
+      gradient: 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)',
+      accentColor: '#48bb78',
+      summaryLabel: '🔬 Research Summary'
+    }
+  };
+  
+  const config = modeConfig[mode];
+  
   const articlesHtml = articles.map((article, index) => `
     <div style="margin-bottom: 40px; padding-bottom: 32px; border-bottom: 1px solid #e2e8f0;">
       <!-- Article Number -->
-      <div style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 6px 14px; border-radius: 6px; font-weight: 600; font-size: 14px; margin-bottom: 16px;">
-        Article ${index + 1} of ${articles.length}
+      <div style="display: inline-block; background: ${config.gradient}; color: white; padding: 6px 14px; border-radius: 6px; font-weight: 600; font-size: 14px; margin-bottom: 16px;">
+        ${config.icon} Article ${index + 1} of ${articles.length}
       </div>
       
       <!-- Title -->
@@ -29,18 +70,30 @@ export function generateDailyDigestEmail(articles: DigestArticle[], userName: st
       
       <!-- Source & Date -->
       <div style="margin-bottom: 16px; color: #718096; font-size: 13px;">
-        <strong style="color: #667eea;">${article.source}</strong> • ${new Date(article.publishedAt).toLocaleDateString()}
+        <strong style="color: ${config.accentColor};">${article.source}</strong> • ${new Date(article.publishedAt).toLocaleDateString()}
       </div>
       
-      <!-- AI Subject/Summary -->
-      <div style="background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); border-left: 4px solid #667eea; padding: 20px; margin: 20px 0; border-radius: 8px;">
+      <!-- AI/Research Summary -->
+      <div style="background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); border-left: 4px solid ${config.accentColor}; padding: 20px; margin: 20px 0; border-radius: 8px;">
         <h3 style="margin: 0 0 12px 0; color: #2d3748; font-size: 16px; font-weight: 600;">
-          📝 AI Summary
+          ${config.summaryLabel}
         </h3>
         <p style="margin: 0; color: #4a5568; font-size: 15px; line-height: 1.7;">
           ${article.aiSummary}
         </p>
       </div>
+      
+      <!-- Key Points (if available) -->
+      ${article.bulletPoints && article.bulletPoints.length > 0 ? `
+        <div style="background: #fff5f5; border-left: 4px solid #f56565; padding: 16px; margin: 16px 0; border-radius: 8px;">
+          <h4 style="margin: 0 0 12px 0; color: #2d3748; font-size: 14px; font-weight: 600;">
+            🔑 Key Points
+          </h4>
+          <ul style="margin: 0; padding-left: 20px; color: #4a5568; font-size: 14px; line-height: 1.6;">
+            ${article.bulletPoints.map(point => `<li style="margin-bottom: 4px;">${point}</li>`).join('')}
+          </ul>
+        </div>
+      ` : ''}
       
       <!-- Full Summary (max 300 words) -->
       <div style="margin: 20px 0;">
@@ -86,12 +139,12 @@ export function generateDailyDigestEmail(articles: DigestArticle[], userName: st
           
           <!-- Header -->
           <tr>
-            <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 48px 40px; text-align: center;">
+            <td style="background: ${config.gradient}; padding: 48px 40px; text-align: center;">
               <h1 style="margin: 0; color: #ffffff; font-size: 38px; font-weight: 700; letter-spacing: -0.5px;">
-                ✨ CreatorPulse
+                ${config.icon} CreatorPulse
               </h1>
               <p style="margin: 12px 0 8px 0; color: rgba(255, 255, 255, 0.95); font-size: 18px; font-weight: 500;">
-                Your Daily AI Intelligence Digest
+                Your Daily ${config.title}
               </p>
               <p style="margin: 0; color: rgba(255, 255, 255, 0.85); font-size: 14px;">
                 ${new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
@@ -106,7 +159,7 @@ export function generateDailyDigestEmail(articles: DigestArticle[], userName: st
                 Good Morning, ${userName}! 👋
               </h2>
               <p style="margin: 0; color: #4a5568; font-size: 16px; line-height: 1.6;">
-                Here are your top <strong>${articles.length} AI news articles</strong> for today, carefully curated and AI-enhanced just for you.
+                Here are your top <strong>${articles.length} ${mode === 'ai_news' ? 'AI news articles' : 'scientific breakthroughs'}</strong> for today, carefully curated and AI-enhanced just for you.
               </p>
             </td>
           </tr>

@@ -78,6 +78,7 @@ export async function PUT(request: NextRequest) {
       topics_of_interest,
       auto_send_email,
       email_notifications,
+      preferred_mode,
     } = body;
 
     const { data, error } = await supabaseClient
@@ -90,6 +91,7 @@ export async function PUT(request: NextRequest) {
         topics_of_interest,
         auto_send_email,
         email_notifications,
+        preferred_mode,
         updated_at: new Date().toISOString(),
       })
       .eq('user_id', userId)

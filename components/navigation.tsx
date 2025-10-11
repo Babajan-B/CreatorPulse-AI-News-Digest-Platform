@@ -62,6 +62,7 @@ export function Navigation() {
 
   const navItems = [
     { href: "/", label: "Digest" },
+    { href: "/social", label: "Social" },
     { href: "/history", label: "History" },
     { href: "/settings", label: "Settings" },
   ]

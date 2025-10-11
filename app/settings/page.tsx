@@ -31,6 +31,7 @@ interface UserSettings {
   topics_of_interest: string[]
   auto_send_email: boolean
   email_notifications: boolean
+  preferred_mode: 'ai_news' | 'science_breakthrough'
 }
 
 export default function SettingsPage() {
@@ -368,6 +369,42 @@ export default function SettingsPage() {
           <Card className="border-border/50 p-6">
             <h2 className="mb-6 text-xl font-semibold">Digest Preferences</h2>
             <div className="space-y-6">
+              {/* Content Mode Selection */}
+              <div className="space-y-2">
+                <Label htmlFor="content-mode">Content Mode</Label>
+                <Select
+                  value={settings.preferred_mode}
+                  onValueChange={(value: 'ai_news' | 'science_breakthrough') =>
+                    setSettings({ ...settings, preferred_mode: value })
+                  }
+                >
+                  <SelectTrigger id="content-mode">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ai_news">
+                      <div className="flex flex-col">
+                        <span className="font-medium">AI News</span>
+                        <span className="text-xs text-muted-foreground">
+                          Latest AI developments, models, and tech news
+                        </span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="science_breakthrough">
+                      <div className="flex flex-col">
+                        <span className="font-medium">Science Breakthroughs</span>
+                        <span className="text-xs text-muted-foreground">
+                          Medical research, scientific discoveries, and breakthroughs
+                        </span>
+                      </div>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  Choose between AI news or scientific breakthrough content
+                </p>
+              </div>
+
               {/* Max Items */}
               <div className="space-y-2">
                 <Label htmlFor="max-items">Maximum Articles per Digest</Label>
