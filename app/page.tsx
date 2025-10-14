@@ -9,6 +9,9 @@ import { TopicFilter } from "@/components/topic-filter"
 import { IntroPage } from "@/components/intro-page"
 import { PlatformIcons } from "@/components/platform-icons"
 import { TrendingTopics } from "@/components/trending-topics"
+import { VoiceModelDialog } from "@/components/voice-model-dialog"
+import { Button } from "@/components/ui/button"
+import { Rss, Mic, FileText } from "lucide-react"
 import { toast } from "sonner"
 
 interface Article {
@@ -145,6 +148,10 @@ export default function HomePage() {
   const [error, setError] = useState<string | null>(null)
   const [sendingDigest, setSendingDigest] = useState(false)
   const [modeChecked, setModeChecked] = useState(false)
+  const [voiceTrained, setVoiceTrained] = useState(false)
+  const [sourcesCount, setSourcesCount] = useState(0)
+  const [showVoiceDialog, setShowVoiceDialog] = useState(false)
+  const [pendingDigestAction, setPendingDigestAction] = useState(false)
 
   // Check if user has seen intro
   useEffect(() => {
@@ -165,6 +172,21 @@ export default function HomePage() {
       }
     }
   }, [router])
+
+  // Fetch voice training and sources status
+  useEffect(() => {
+    Promise.all([
+      fetch('/api/voice-training').then(r => r.json()),
+      fetch('/api/sources').then(r => r.json())
+    ]).then(([voiceData, sourcesData]) => {
+      if (voiceData.success) {
+        setVoiceTrained(voiceData.trained || false)
+      }
+      if (sourcesData.success) {
+        setSourcesCount(sourcesData.sources?.length || 0)
+      }
+    }).catch(() => {})
+  }, [])
 
   // Fetch real RSS articles
   useEffect(() => {
@@ -211,14 +233,14 @@ export default function HomePage() {
     }
   }
 
-  const handleSendDigest = async () => {
+  const handleSendDigest = async (useVoiceModel: boolean) => {
     setSendingDigest(true)
     try {
       // First generate digest
       const generateResponse = await fetch('/api/digest/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ limit: 5 }),
+        body: JSON.stringify({ limit: 5, use_voice_model: useVoiceModel }),
       })
 
       const generateData = await generateResponse.json()
@@ -303,38 +325,73 @@ export default function HomePage() {
   return (
     <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
       {/* Header */}
-      <div className="mb-8 flex items-start justify-between">
-        <div>
-          <h1 className="mb-2 text-balance text-4xl font-bold tracking-tight sm:text-5xl">Today's AI Digest</h1>
-          <p className="text-pretty text-lg text-muted-foreground">
-            Curated news and insights from the world of artificial intelligence
-          </p>
-        </div>
-        <div className="flex gap-3">
-          <button
-            onClick={handleSendDigest}
-            disabled={sendingDigest || loading}
-            className="rounded-lg border-2 border-accent bg-accent/10 px-4 py-2 text-sm font-medium text-accent shadow-md transition-all hover:bg-accent/20 hover:shadow-lg disabled:opacity-50"
+      <div className="mb-8">
+        <h1 className="mb-2 text-balance text-4xl font-bold tracking-tight sm:text-5xl">Today's AI Digest</h1>
+        <p className="text-pretty text-lg text-muted-foreground mb-4">
+          Curated news and insights from the world of artificial intelligence
+        </p>
+        
+        {/* Action Buttons */}
+        <div className="flex flex-wrap gap-2">
+          <Button
+            onClick={() => router.push('/sources')}
+            variant={sourcesCount > 0 ? "outline" : "default"}
+            size="sm"
+            className="gap-2"
           >
-            {sendingDigest ? '📧 Sending...' : '📧 Send Daily Digest'}
-          </button>
+            <Rss className="h-4 w-4" />
+            {sourcesCount > 0 ? `Custom Sources (${sourcesCount})` : 'Add Custom Sources'}
+          </Button>
           
-          <button
-            onClick={() => {
-              setLoading(true)
-              fetch('/api/articles?limit=50')
-                .then(res => res.json())
-                .then(data => {
-                  if (data.success) setArticles(data.articles)
-                  setLoading(false)
-                })
-                .catch(() => setLoading(false))
-            }}
-            disabled={loading}
-            className="rounded-lg bg-gradient-to-r from-primary to-accent px-4 py-2 text-sm font-medium text-primary-foreground shadow-md transition-all hover:shadow-lg disabled:opacity-50"
+          <Button
+            onClick={() => router.push('/voice-training')}
+            variant={voiceTrained ? "outline" : "default"}
+            size="sm"
+            className="gap-2"
           >
-            {loading ? 'Refreshing...' : 'Refresh Feed'}
-          </button>
+            <Mic className="h-4 w-4" />
+            {voiceTrained ? 'Voice Trained ✓' : 'Train Voice'}
+          </Button>
+          
+          <Button
+            onClick={() => router.push('/drafts')}
+            variant="outline"
+            size="sm"
+            className="gap-2"
+          >
+            <FileText className="h-4 w-4" />
+            Generate Newsletter
+          </Button>
+          
+          <div className="ml-auto flex gap-2">
+            <button
+              onClick={() => {
+                setPendingDigestAction(true)
+                setShowVoiceDialog(true)
+              }}
+              disabled={sendingDigest || loading}
+              className="rounded-lg border-2 border-accent bg-accent/10 px-4 py-2 text-sm font-medium text-accent shadow-md transition-all hover:bg-accent/20 hover:shadow-lg disabled:opacity-50"
+            >
+              {sendingDigest ? '📧 Sending...' : '📧 Send Daily Digest'}
+            </button>
+            
+            <button
+              onClick={() => {
+                setLoading(true)
+                fetch('/api/articles?limit=50')
+                  .then(res => res.json())
+                  .then(data => {
+                    if (data.success) setArticles(data.articles)
+                    setLoading(false)
+                  })
+                  .catch(() => setLoading(false))
+              }}
+              disabled={loading}
+              className="rounded-lg bg-gradient-to-r from-primary to-accent px-4 py-2 text-sm font-medium text-primary-foreground shadow-md transition-all hover:shadow-lg disabled:opacity-50"
+            >
+              {loading ? 'Refreshing...' : 'Refresh Feed'}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -343,7 +400,6 @@ export default function HomePage() {
       <div className="mb-8">
         <AISearchBar />
       </div>
-
 
       {/* Trending Topics from Social Media */}
       <TrendingTopics />
@@ -402,6 +458,21 @@ export default function HomePage() {
           <p className="mt-2 text-sm text-muted-foreground">Try selecting a different technology filter</p>
         </div>
       )}
+
+      {/* Voice Model Selection Dialog */}
+      <VoiceModelDialog
+        open={showVoiceDialog}
+        onOpenChange={setShowVoiceDialog}
+        voiceTrained={voiceTrained}
+        title="Send Daily Digest"
+        description="Choose how to generate your daily digest content"
+        onConfirm={async (useVoice) => {
+          if (pendingDigestAction) {
+            await handleSendDigest(useVoice)
+            setPendingDigestAction(false)
+          }
+        }}
+      />
     </div>
   )
 }

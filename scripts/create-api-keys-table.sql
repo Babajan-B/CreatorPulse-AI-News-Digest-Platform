@@ -48,3 +48,6 @@ CREATE TRIGGER trigger_update_user_api_keys_updated_at
 -- Grant permissions (adjust as needed for your setup)
 -- GRANT SELECT, INSERT, UPDATE, DELETE ON user_api_keys TO your_app_user;
 -- GRANT USAGE ON SEQUENCE user_api_keys_id_seq TO your_app_user;
+
+
+

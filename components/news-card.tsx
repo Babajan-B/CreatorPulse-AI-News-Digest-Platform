@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -27,6 +27,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { VoiceModelDialog } from "@/components/voice-model-dialog"
 import { toast } from "sonner"
 
 interface NewsCardProps {
@@ -56,6 +57,20 @@ export function NewsCard({
   author
 }: NewsCardProps) {
   const [sendingEmail, setSendingEmail] = useState(false)
+  const [showVoiceDialog, setShowVoiceDialog] = useState(false)
+  const [voiceTrained, setVoiceTrained] = useState(false)
+  const [pendingAction, setPendingAction] = useState<'email' | 'social' | null>(null)
+
+  useEffect(() => {
+    fetch('/api/voice-training')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          setVoiceTrained(data.trained || false)
+        }
+      })
+      .catch(() => {})
+  }, [])
 
   const getQualityColor = (score: number) => {
     if (score >= 8) return "text-[var(--quality-high)]"
@@ -69,7 +84,7 @@ export function NewsCard({
     return "bg-[var(--quality-low)]/10"
   }
 
-  const handleSendArticleEmail = async () => {
+  const handleSendArticleEmail = async (useVoiceModel: boolean) => {
     setSendingEmail(true)
     try {
       const response = await fetch('/api/article/send', {
@@ -80,7 +95,8 @@ export function NewsCard({
           summary, 
           url, 
           source,
-          publishedAt 
+          publishedAt,
+          use_voice_model: useVoiceModel
         }),
       })
 
@@ -90,7 +106,7 @@ export function NewsCard({
         toast.success(
           'Article sent via email!',
           {
-            description: `Delivered to ${data.email.to}`,
+            description: `Delivered to ${data.email.to} ${useVoiceModel ? 'with your voice' : 'with default style'}`,
             duration: 4000,
           }
         )
@@ -245,7 +261,10 @@ export function NewsCard({
           <Button
             variant="outline"
             size="icon"
-            onClick={handleSendArticleEmail}
+            onClick={() => {
+              setPendingAction('email')
+              setShowVoiceDialog(true)
+            }}
             disabled={sendingEmail}
             className="border-accent/50 hover:border-accent hover:bg-accent/10"
             title="Send this article via email"
@@ -292,6 +311,21 @@ export function NewsCard({
           </DropdownMenu>
         </div>
       </div>
+
+      {/* Voice Model Selection Dialog */}
+      <VoiceModelDialog
+        open={showVoiceDialog}
+        onOpenChange={setShowVoiceDialog}
+        voiceTrained={voiceTrained}
+        title={pendingAction === 'email' ? 'Send Article via Email' : 'Share Article'}
+        description="Choose how to generate the article summary"
+        onConfirm={async (useVoice) => {
+          if (pendingAction === 'email') {
+            await handleSendArticleEmail(useVoice)
+          }
+          setPendingAction(null)
+        }}
+      />
     </Card>
   )
 }

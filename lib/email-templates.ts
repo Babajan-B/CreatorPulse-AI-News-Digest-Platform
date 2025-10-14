@@ -340,3 +340,188 @@ export function generateArticleEmail(article: {
   `.trim();
 }
 
+/**
+ * Generate newsletter draft email HTML
+ */
+export function generateNewsletterDraftEmail(options: {
+  draft: any;
+  userName: string;
+}) {
+  const { draft, userName } = options;
+  const articles = draft.curated_articles || [];
+  const trends = draft.trends_section?.top_3_trends || [];
+
+  // Generate articles HTML
+  const articlesHtml = articles.map((article: any, index: number) => `
+    <div style="margin-bottom: 40px; padding-bottom: 32px; border-bottom: 1px solid #e2e8f0;">
+      <div style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 6px 14px; border-radius: 6px; font-weight: 600; font-size: 14px; margin-bottom: 16px;">
+        📰 Article ${index + 1} of ${articles.length}
+      </div>
+      
+      <h2 style="margin: 16px 0 12px 0; color: #1a1a1a; font-size: 22px; font-weight: 700; line-height: 1.4;">
+        ${article.title}
+      </h2>
+      
+      <div style="margin-bottom: 16px; color: #718096; font-size: 13px;">
+        <strong style="color: #667eea;">${article.source}</strong>
+      </div>
+      
+      <div style="background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); border-left: 4px solid #667eea; padding: 20px; margin: 20px 0; border-radius: 8px;">
+        <p style="margin: 0; color: #4a5568; font-size: 15px; line-height: 1.7;">
+          ${article.summary}
+        </p>
+      </div>
+      
+      ${article.bullet_points && article.bullet_points.length > 0 ? `
+        <div style="background: #fff5f5; border-left: 4px solid #f56565; padding: 16px; margin: 16px 0; border-radius: 8px;">
+          <h4 style="margin: 0 0 12px 0; color: #2d3748; font-size: 14px; font-weight: 600;">
+            🔑 Key Points
+          </h4>
+          <ul style="margin: 0; padding-left: 20px; color: #4a5568; font-size: 14px; line-height: 1.6;">
+            ${article.bullet_points.map((point: string) => `<li style="margin-bottom: 4px;">${point}</li>`).join('')}
+          </ul>
+        </div>
+      ` : ''}
+      
+      ${article.commentary ? `
+        <div style="background: linear-gradient(135deg, #fef5ff 0%, #f3e8ff 100%); border-left: 4px solid #9f7aea; padding: 16px; margin: 16px 0; border-radius: 8px;">
+          <p style="margin: 0; color: #4a5568; font-size: 14px; line-height: 1.6; font-style: italic;">
+            💭 ${article.commentary}
+          </p>
+        </div>
+      ` : ''}
+      
+      <div style="text-align: center; margin-top: 24px;">
+        <a href="${article.url}" 
+           style="display: inline-block; 
+                  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                  color: white; 
+                  text-decoration: none; 
+                  padding: 12px 32px; 
+                  border-radius: 6px; 
+                  font-weight: 600; 
+                  font-size: 14px;
+                  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);">
+          Read Full Article →
+        </a>
+      </div>
+    </div>
+  `).join('');
+
+  // Generate trends HTML
+  const trendsHtml = trends.length > 0 ? `
+    <div style="background: linear-gradient(135deg, #fff5f7 0%, #fef5ff 100%); border-radius: 12px; padding: 32px; margin: 40px 0;">
+      <h3 style="margin: 0 0 24px 0; color: #2d3748; font-size: 24px; font-weight: 700;">
+        🔥 Trending Topics to Watch
+      </h3>
+      <div>
+        ${trends.map((trend: any, index: number) => `
+          <div style="margin-bottom: 20px; padding-bottom: 20px; ${index < trends.length - 1 ? 'border-bottom: 1px solid #e2e8f0;' : ''}">
+            <h4 style="margin: 0 0 8px 0; color: #1a1a1a; font-size: 18px; font-weight: 600;">
+              ${index + 1}. ${trend.topic}
+            </h4>
+            <p style="margin: 0; color: #4a5568; font-size: 14px; line-height: 1.6;">
+              ${trend.explainer}
+            </p>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  ` : '';
+
+  return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${draft.title} - CreatorPulse Newsletter</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5;">
+  <table cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #f5f5f5; padding: 40px 20px;">
+    <tr>
+      <td align="center">
+        <table cellpadding="0" cellspacing="0" border="0" width="650" style="max-width: 650px; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.1);">
+          
+          <!-- Header -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 48px 40px; text-align: center;">
+              <h1 style="margin: 0; color: #ffffff; font-size: 38px; font-weight: 700; letter-spacing: -0.5px;">
+                ✨ CreatorPulse Newsletter
+              </h1>
+              <p style="margin: 12px 0 8px 0; color: rgba(255, 255, 255, 0.95); font-size: 18px; font-weight: 500;">
+                ${draft.title}
+              </p>
+              <p style="margin: 0; color: rgba(255, 255, 255, 0.85); font-size: 14px;">
+                ${new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+              </p>
+            </td>
+          </tr>
+          
+          <!-- Introduction -->
+          <tr>
+            <td style="padding: 40px 40px 32px 40px;">
+              <div style="color: #4a5568; font-size: 16px; line-height: 1.7; white-space: pre-wrap;">
+                ${draft.content_intro}
+              </div>
+            </td>
+          </tr>
+          
+          <!-- Trending Topics -->
+          ${trendsHtml ? `
+          <tr>
+            <td style="padding: 0 40px 40px 40px;">
+              ${trendsHtml}
+            </td>
+          </tr>
+          ` : ''}
+          
+          <!-- Articles -->
+          <tr>
+            <td style="padding: 0 40px 40px 40px;">
+              <h3 style="margin: 0 0 24px 0; color: #2d3748; font-size: 24px; font-weight: 700;">
+                📚 Today's Top Articles
+              </h3>
+              ${articlesHtml}
+            </td>
+          </tr>
+          
+          <!-- Closing -->
+          <tr>
+            <td style="padding: 0 40px 40px 40px;">
+              <div style="background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); border-radius: 12px; padding: 32px;">
+                <div style="color: #4a5568; font-size: 16px; line-height: 1.7; white-space: pre-wrap;">
+                  ${draft.closing}
+                </div>
+              </div>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); padding: 32px 40px; border-top: 1px solid #e2e8f0;">
+              <div style="text-align: center;">
+                <p style="margin: 0 0 8px 0; color: #a0aec0; font-size: 13px;">
+                  Created with CreatorPulse AI • Delivered by MailerSend
+                </p>
+                <p style="margin: 0; color: #cbd5e0; font-size: 12px;">
+                  © 2025 CreatorPulse. All rights reserved.
+                </p>
+                <p style="margin: 16px 0 0 0;">
+                  <a href="http://localhost:3000" style="color: #667eea; text-decoration: none; font-size: 12px;">
+                    Visit CreatorPulse
+                  </a>
+                </p>
+              </div>
+            </td>
+          </tr>
+          
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `.trim();
+}
+

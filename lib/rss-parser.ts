@@ -209,8 +209,19 @@ export async function fetchAllRSSFeeds(limit?: number): Promise<RSSArticle[]> {
   const results = await Promise.all(fetchPromises);
   const allArticles = results.flat();
   
+  // FILTER: Only articles from last 7 days
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  
+  const recentArticles = allArticles.filter(article => {
+    const publishedDate = new Date(article.publishedAt);
+    return publishedDate >= sevenDaysAgo;
+  });
+  
+  console.log(`📅 Filtered to ${recentArticles.length} articles from last 7 days (from ${allArticles.length} total)`);
+  
   // Sort by quality score and published date
-  const sortedArticles = allArticles.sort((a, b) => {
+  const sortedArticles = recentArticles.sort((a, b) => {
     const scoreDiff = b.qualityScore - a.qualityScore;
     if (Math.abs(scoreDiff) > 0.5) return scoreDiff;
     
@@ -221,7 +232,7 @@ export async function fetchAllRSSFeeds(limit?: number): Promise<RSSArticle[]> {
   // Limit results if specified
   const limitedArticles = limit ? sortedArticles.slice(0, limit) : sortedArticles;
   
-  console.log(`Fetched ${limitedArticles.length} articles from ${rssSources.length} sources`);
+  console.log(`Fetched ${limitedArticles.length} recent articles from ${rssSources.length} sources`);
   
   return limitedArticles;
 }

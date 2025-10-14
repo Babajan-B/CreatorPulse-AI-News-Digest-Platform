@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { Moon, Sun, Sparkles, LogIn, LogOut, User as UserIcon } from "lucide-react"
+import { Moon, Sun, Sparkles, LogIn, LogOut, User as UserIcon, Rss, Mic, BarChart3 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -62,7 +62,9 @@ export function Navigation() {
 
   const navItems = [
     { href: "/", label: "Digest" },
+    { href: "/drafts", label: "Drafts" },
     { href: "/social", label: "Social" },
+    { href: "/analytics", label: "Analytics" },
     { href: "/history", label: "History" },
     { href: "/settings", label: "Settings" },
   ]
@@ -134,6 +136,24 @@ export function Navigation() {
                       <Link href="/settings">
                         <UserIcon className="mr-2 h-4 w-4" />
                         Settings
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/sources">
+                        <Rss className="mr-2 h-4 w-4" />
+                        Custom Sources
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/voice-training">
+                        <Mic className="mr-2 h-4 w-4" />
+                        Voice Training
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/analytics">
+                        <BarChart3 className="mr-2 h-4 w-4" />
+                        Analytics
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>

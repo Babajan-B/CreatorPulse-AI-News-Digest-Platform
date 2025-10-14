@@ -9,7 +9,7 @@ interface CacheEntry {
 
 class RedditCache {
   private cache: Map<string, CacheEntry> = new Map();
-  private updateInterval = 12 * 60 * 60 * 1000; // 12 hours (twice per day)
+  private updateInterval = 2 * 60 * 60 * 1000; // 2 hours for fresh trending content
 
   /**
    * Get cached data if available and not expired
@@ -36,7 +36,7 @@ class RedditCache {
   }
 
   /**
-   * Set cache data with 12-hour expiry
+   * Set cache data with 2-hour expiry for fresh trending
    */
   set(key: string, data: RedditPost[]): void {
     const now = Date.now();

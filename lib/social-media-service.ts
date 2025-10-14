@@ -68,25 +68,49 @@ export class SocialMediaService {
       console.log(`⚡ Fetched ${slashdotPosts.length} Slashdot posts`);
       console.log(`🚀 Fetched ${producthuntPosts.length} Product Hunt posts`);
 
+      // FILTER: Only posts from last 48 hours (2 days)
+      const twoDaysAgo = new Date();
+      twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+
+      const filterRecent = (posts: SocialMediaPost[]) => {
+        return posts.filter(post => {
+          const postDate = new Date(post.created_at);
+          return postDate >= twoDaysAgo;
+        });
+      };
+
+      const recentReddit = filterRecent(redditPosts);
+      const recentHackernews = filterRecent(hackernewsPosts);
+      const recentLobsters = filterRecent(lobstersPosts);
+      const recentSlashdot = filterRecent(slashdotPosts);
+      const recentProducthunt = filterRecent(producthuntPosts);
+
+      console.log(`📅 Filtered to last 48 hours:`);
+      console.log(`   Reddit: ${recentReddit.length}/${redditPosts.length}`);
+      console.log(`   Hacker News: ${recentHackernews.length}/${hackernewsPosts.length}`);
+      console.log(`   Lobsters: ${recentLobsters.length}/${lobstersPosts.length}`);
+      console.log(`   Slashdot: ${recentSlashdot.length}/${slashdotPosts.length}`);
+      console.log(`   Product Hunt: ${recentProducthunt.length}/${producthuntPosts.length}`);
+
       // Combine and sort by trending score
       const combined = [
-        ...redditPosts,
-        ...hackernewsPosts,
-        ...lobstersPosts,
-        ...slashdotPosts,
-        ...producthuntPosts
+        ...recentReddit,
+        ...recentHackernews,
+        ...recentLobsters,
+        ...recentSlashdot,
+        ...recentProducthunt
       ]
         .sort((a, b) => b.trending_score - a.trending_score)
         .slice(0, limit);
 
-      console.log(`🎯 Total trending content: ${combined.length} posts`);
+      console.log(`🎯 Total trending content (recent): ${combined.length} posts`);
 
       return {
-        reddit: redditPosts,
-        hackernews: hackernewsPosts,
-        lobsters: lobstersPosts,
-        slashdot: slashdotPosts,
-        producthunt: producthuntPosts,
+        reddit: recentReddit,
+        hackernews: recentHackernews,
+        lobsters: recentLobsters,
+        slashdot: recentSlashdot,
+        producthunt: recentProducthunt,
         combined,
         total_count: combined.length,
         last_updated: new Date()

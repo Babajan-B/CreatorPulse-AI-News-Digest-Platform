@@ -22,7 +22,10 @@ import {
   Twitter,
   Linkedin,
   Facebook,
-  Copy
+  Copy,
+  Rss,
+  Mic,
+  FileText
 } from 'lucide-react'
 import {
   DropdownMenu,
@@ -32,6 +35,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { VoiceModelDialog } from '@/components/voice-model-dialog'
 import { toast } from 'sonner'
 import { StatsDashboard } from '@/components/stats-dashboard'
 import { ScienceTrendingTopics } from '@/components/science-trending-topics'
@@ -65,9 +69,28 @@ export default function SciencePage() {
   const [refreshing, setRefreshing] = useState(false)
   const [sendingDigest, setSendingDigest] = useState(false)
   const [sendingEmail, setSendingEmail] = useState<string | null>(null)
+  const [voiceTrained, setVoiceTrained] = useState(false)
+  const [sourcesCount, setSourcesCount] = useState(0)
+  const [showVoiceDialog, setShowVoiceDialog] = useState(false)
+  const [pendingArticle, setPendingArticle] = useState<ScienceArticle | null>(null)
 
   useEffect(() => {
     loadScienceContent()
+  }, [])
+
+  // Fetch voice training and sources status
+  useEffect(() => {
+    Promise.all([
+      fetch('/api/voice-training').then(r => r.json()),
+      fetch('/api/sources').then(r => r.json())
+    ]).then(([voiceData, sourcesData]) => {
+      if (voiceData.success) {
+        setVoiceTrained(voiceData.trained || false)
+      }
+      if (sourcesData.success) {
+        setSourcesCount(sourcesData.sources?.length || 0)
+      }
+    }).catch(() => {})
   }, [])
 
   const loadScienceContent = async () => {
@@ -151,7 +174,7 @@ export default function SciencePage() {
     }
   }
 
-  const handleSendArticleEmail = async (article: ScienceArticle) => {
+  const handleSendArticleEmail = async (article: ScienceArticle, useVoiceModel: boolean) => {
     setSendingEmail(article.id)
     try {
       const response = await fetch('/api/science/send-article', {
@@ -164,7 +187,8 @@ export default function SciencePage() {
           source: article.source,
           publishedAt: article.published_at,
           bulletPoints: article.bullet_points,
-          hashtags: article.hashtags
+          hashtags: article.hashtags,
+          use_voice_model: useVoiceModel
         }),
       })
 
@@ -261,31 +285,62 @@ export default function SciencePage() {
   return (
     <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
       {/* Header */}
-      <div className="mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-3 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl">
-              <Microscope className="h-8 w-8 text-white" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-teal-700 bg-clip-text text-transparent">
-                Science Breakthroughs
-              </h1>
-              <p className="text-emerald-600">Latest research discoveries and scientific innovations</p>
-            </div>
+      <div className="mb-8">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="p-3 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl">
+            <Microscope className="h-8 w-8 text-white" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-teal-700 bg-clip-text text-transparent">
+              Science Breakthroughs
+            </h1>
+            <p className="text-emerald-600">Latest research discoveries and scientific innovations</p>
           </div>
         </div>
         
-        <div className="flex items-center gap-2">
+        {/* Action Buttons */}
+        <div className="flex flex-wrap gap-2 mt-4">
           <Button 
             variant="outline" 
             size="sm"
             onClick={() => router.push('/select-mode')}
-            className="text-emerald-600 border-emerald-200 hover:bg-emerald-50"
+            className="gap-2"
           >
-            <ArrowLeft className="h-4 w-4 mr-2" />
+            <ArrowLeft className="h-4 w-4" />
             Switch Mode
           </Button>
+          
+          <Button
+            onClick={() => router.push('/sources')}
+            variant={sourcesCount > 0 ? "outline" : "default"}
+            size="sm"
+            className="gap-2"
+          >
+            <Rss className="h-4 w-4" />
+            {sourcesCount > 0 ? `Custom Sources (${sourcesCount})` : 'Add Custom Sources'}
+          </Button>
+          
+          <Button
+            onClick={() => router.push('/voice-training')}
+            variant={voiceTrained ? "outline" : "default"}
+            size="sm"
+            className="gap-2"
+          >
+            <Mic className="h-4 w-4" />
+            {voiceTrained ? 'Voice Trained ✓' : 'Train Voice'}
+          </Button>
+          
+          <Button
+            onClick={() => router.push('/drafts')}
+            variant="outline"
+            size="sm"
+            className="gap-2"
+          >
+            <FileText className="h-4 w-4" />
+            Generate Newsletter
+          </Button>
+          
+          <div className="ml-auto flex gap-2">
           <Button
             onClick={handleRefresh}
             disabled={refreshing}
@@ -318,6 +373,7 @@ export default function SciencePage() {
             )}
           </Button>
         </div>
+      </div>
       </div>
 
       {/* Stats Dashboard */}
@@ -371,7 +427,10 @@ export default function SciencePage() {
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
                       <Button
-                        onClick={() => handleSendArticleEmail(article)}
+                        onClick={() => {
+                          setPendingArticle(article)
+                          setShowVoiceDialog(true)
+                        }}
                         disabled={sendingEmail === article.id}
                         size="sm"
                         variant="ghost"
@@ -484,6 +543,21 @@ export default function SciencePage() {
           </div>
         )}
       </div>
+
+      {/* Voice Model Selection Dialog */}
+      <VoiceModelDialog
+        open={showVoiceDialog}
+        onOpenChange={setShowVoiceDialog}
+        voiceTrained={voiceTrained}
+        title="Send Science Article via Email"
+        description="Choose how to generate the article summary"
+        onConfirm={async (useVoice) => {
+          if (pendingArticle) {
+            await handleSendArticleEmail(pendingArticle, useVoice)
+          }
+          setPendingArticle(null)
+        }}
+      />
     </div>
   )
 }

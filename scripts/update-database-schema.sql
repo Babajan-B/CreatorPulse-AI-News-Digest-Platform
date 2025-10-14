@@ -30,3 +30,6 @@ SELECT
 FROM information_schema.columns 
 WHERE table_name = 'user_settings' 
 AND column_name = 'preferred_mode';
+
+
+

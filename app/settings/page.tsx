@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from 'sonner'
 import { 
   Save, User as UserIcon, Clock, Mail, Loader2, Send, Check, 
-  Settings as SettingsIcon, Bell 
+  Settings as SettingsIcon, Bell, Rss, Mic, ArrowRight 
 } from 'lucide-react'
 
 interface User {
@@ -184,6 +184,50 @@ export default function SettingsPage() {
               )}
             </div>
           </div>
+        </div>
+      </Card>
+
+      {/* Quick Links Card */}
+      <Card className="mb-6 border-border/50 p-6">
+        <h2 className="mb-4 text-lg font-semibold">Quick Access</h2>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Button
+            variant="outline"
+            className="justify-start h-auto py-3 px-4"
+            asChild
+          >
+            <a href="/sources">
+              <div className="flex items-center gap-3 w-full">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                  <Rss className="h-5 w-5 text-primary" />
+                </div>
+                <div className="flex-1 text-left">
+                  <div className="font-semibold">Custom Sources</div>
+                  <div className="text-xs text-muted-foreground">Add Twitter, YouTube, RSS feeds</div>
+                </div>
+                <ArrowRight className="h-4 w-4 text-muted-foreground" />
+              </div>
+            </a>
+          </Button>
+
+          <Button
+            variant="outline"
+            className="justify-start h-auto py-3 px-4"
+            asChild
+          >
+            <a href="/voice-training">
+              <div className="flex items-center gap-3 w-full">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10">
+                  <Mic className="h-5 w-5 text-accent" />
+                </div>
+                <div className="flex-1 text-left">
+                  <div className="font-semibold">Voice Training</div>
+                  <div className="text-xs text-muted-foreground">Train AI to write in your style</div>
+                </div>
+                <ArrowRight className="h-4 w-4 text-muted-foreground" />
+              </div>
+            </a>
+          </Button>
         </div>
       </Card>
 
