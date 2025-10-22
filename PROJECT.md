@@ -1,8 +1,8 @@
-# 🚀 CreatorPulse - Project Overview
+# 🚀 CreatorPulse - Complete Project Documentation
 
-**Last Updated:** October 21, 2025  
-**Version:** 1.0  
-**Status:** Production Ready
+**Last Updated:** October 22, 2025  
+**Version:** 2.0  
+**Status:** Production Ready with Advanced Features
 
 ---
 
@@ -21,25 +21,32 @@
 11. [Development Guide](#development-guide)
 12. [Deployment](#deployment)
 13. [Troubleshooting](#troubleshooting)
+14. [Recent Updates](#recent-updates)
+15. [AI Creators Feature](#ai-creators-feature)
+16. [Custom Sources System](#custom-sources-system)
+17. [Content Generation System](#content-generation-system)
+18. [YouTube Integration](#youtube-integration)
+19. [Twitter Integration](#twitter-integration)
 
 ---
 
 ## 📌 Project Summary
 
-**CreatorPulse** is an AI-powered content curation and generation platform designed to help content creators stay informed about AI/ML developments and generate high-quality, platform-specific content.
+**CreatorPulse** is a comprehensive AI-powered content curation and generation platform designed to revolutionize how content creators discover, curate, and generate AI/ML-focused content across multiple platforms.
 
 ### **Core Purpose**
-Automates the content creation workflow by:
-- **Aggregating** AI news from 30+ RSS feeds and social media
-- **Curating** top-quality articles using AI scoring
-- **Generating** platform-specific content (Twitter, LinkedIn, YouTube, etc.)
-- **Delivering** personalized newsletters via email
+Automates the entire content creation workflow by:
+- **Aggregating** AI news from 30+ RSS feeds, social media platforms, and custom sources
+- **Curating** top-quality articles using advanced AI scoring algorithms
+- **Generating** platform-specific content optimized for Twitter, LinkedIn, YouTube, Instagram, and newsletters
+- **Delivering** personalized content via email newsletters and direct platform publishing
+- **Tracking** performance analytics and ROI metrics
 
 ### **Problem Statement**
-Creators lose valuable time manually researching and curating content, which slows consistency and limits reach.
+Content creators lose valuable time manually researching and curating content, which slows consistency and limits reach. The process of finding relevant AI/ML news, adapting content for different platforms, and maintaining consistent publishing schedules is time-consuming and inefficient.
 
 ### **Solution**
-CreatorPulse automates source aggregation, surfaces emerging trends, and streamlines content packaging for faster, higher-quality output.
+CreatorPulse automates source aggregation, surfaces emerging trends, and streamlines content packaging for faster, higher-quality output across all major content platforms.
 
 ---
 
@@ -48,29 +55,36 @@ CreatorPulse automates source aggregation, surfaces emerging trends, and streaml
 ### **Frontend**
 - **Framework:** Next.js 15 (App Router)
 - **Language:** TypeScript 5
-- **Styling:** Tailwind CSS
-- **UI Components:** shadcn/ui
-- **State Management:** React Server Components + Client Components
+- **Styling:** Tailwind CSS + Custom Design System
+- **UI Components:** Radix UI + Custom Components
+- **State Management:** React Hooks + Context
+- **Icons:** Lucide React
+- **Animations:** Custom CSS + Canvas API
+- **Date Handling:** date-fns
 
 ### **Backend**
 - **Runtime:** Node.js 18+
-- **API:** Next.js API Routes
-- **Authentication:** JWT (JSON Web Tokens) with httpOnly cookies
+- **Framework:** Next.js API Routes
+- **Database:** Supabase (PostgreSQL)
+- **Authentication:** JWT + Supabase Auth
+- **Email Service:** MailerSend
+- **AI/ML:** Groq Llama 3.3 70B
+- **RSS Parsing:** rss-parser
+- **HTTP Client:** Fetch API
 
-### **Database**
-- **Primary:** Supabase (PostgreSQL)
-- **ORM:** Supabase Client SDK
-- **Caching:** In-memory cache for articles
-
-### **AI/ML Services**
-- **LLM:** Groq Llama 3.3 70B
-- **Content Generation:** Custom AI templates
-- **Voice Matching:** AI-powered personalization
-
-### **External Services**
-- **Email:** MailerSend
-- **RSS Parsing:** Custom RSS parser with quality scoring
+### **External APIs**
+- **Twitter/X:** Twitter API v2 (Bearer Token)
+- **YouTube:** YouTube Data API v3 + RSS Feeds
 - **Social Media:** Reddit, Hacker News, Lobsters, Slashdot, Product Hunt
+- **Email:** MailerSend API
+- **AI:** Groq API
+
+### **Development Tools**
+- **Package Manager:** npm
+- **Linting:** ESLint
+- **Type Checking:** TypeScript
+- **Version Control:** Git
+- **Deployment:** Vercel (recommended)
 
 ---
 
@@ -78,204 +92,143 @@ CreatorPulse automates source aggregation, surfaces emerging trends, and streaml
 
 ```
 creatorpulse/
-├── app/                    # Next.js app directory
-│   ├── api/               # API routes
-│   │   ├── articles/      # Article fetching
-│   │   ├── auth/          # Authentication endpoints
-│   │   ├── drafts/        # Draft generation & management
-│   │   ├── social/        # Social media integration
-│   │   └── ...
-│   ├── drafts/            # Draft management pages
-│   ├── history/           # User history
-│   ├── settings/          # User settings
-│   ├── globals.css        # Global styles
-│   ├── layout.tsx         # Root layout
-│   └── page.tsx           # Homepage
-│
-├── components/            # React components
-│   ├── ui/               # shadcn/ui components
-│   ├── matrix-hero.tsx   # Animated hero section
-│   ├── news-card.tsx     # Article display
-│   ├── article-selector.tsx  # Article selection UI
-│   ├── content-customizer.tsx  # Content customization
-│   └── ...
-│
-├── lib/                   # Core business logic
-│   ├── supabase.ts       # Database client
-│   ├── auth.ts           # Authentication
-│   ├── rss-parser.ts     # RSS feed parsing
-│   ├── llm-service.ts    # AI/LLM integration
-│   ├── email-service.ts  # Email sending
-│   ├── draft-generator.ts  # Content generation
-│   ├── content-templates-v2.ts  # Content templates
-│   ├── social-media-service.ts  # Social media
-│   └── ...
-│
-├── public/               # Static assets
-│   ├── logos/           # Platform logos
-│   └── ...
-│
-├── scripts/             # Utility scripts
-│   ├── add-sources.ts   # Add RSS feeds
-│   ├── create-admin.ts  # Create admin user
-│   └── ...
-│
-├── supabase/            # Database schemas
-│   ├── schema.sql       # Main schema
-│   └── QUICK_SETUP.sql  # Quick setup
-│
-├── config.json          # RSS feed configuration
-├── package.json         # Dependencies
-├── tsconfig.json        # TypeScript config
-├── next.config.mjs      # Next.js config
-└── .env.local           # Environment variables
+├── app/                          # Next.js App Router
+│   ├── api/                      # API Routes
+│   │   ├── ai-creators/         # AI Creators Management
+│   │   ├── articles/            # Article Management
+│   │   ├── auth/                # Authentication
+│   │   ├── custom-sources/      # Custom Sources API
+│   │   ├── drafts/              # Content Drafts
+│   │   ├── sources/             # Source Management
+│   │   └── social/              # Social Media Integration
+│   ├── ai-creators/             # AI Creators Page
+│   ├── analytics/               # Analytics Dashboard
+│   ├── drafts/                  # Draft Management
+│   ├── sources/                 # Custom Sources Page
+│   └── page.tsx                 # Homepage (AI News)
+├── components/                   # React Components
+│   ├── ui/                      # Base UI Components
+│   ├── article-selector.tsx    # Article Selection
+│   ├── content-customizer.tsx   # Content Customization
+│   ├── matrix-hero.tsx          # Animated Hero
+│   ├── source-type-filter.tsx   # Source Filtering
+│   └── stats-dashboard.tsx      # Statistics Display
+├── lib/                         # Core Services
+│   ├── custom-sources-service.ts # Custom Sources Logic
+│   ├── twitter-service.ts       # Twitter Integration
+│   ├── youtube-service.ts       # YouTube Integration
+│   ├── draft-generator.ts       # Content Generation
+│   ├── content-templates-v2.ts   # Platform Templates
+│   └── supabase.ts             # Database Client
+├── supabase/                    # Database Schemas
+│   ├── schema.sql              # Main Schema
+│   └── AI_CREATORS_SCHEMA.sql  # AI Creators Schema
+└── public/                      # Static Assets
 ```
 
 ---
 
 ## ✨ Key Features
 
-### **1. News Aggregation**
-- **30+ RSS Feeds** from top AI sources (OpenAI, Google AI, TechCrunch, etc.)
-- **Quality Scoring** (0-10 scale) based on:
-  - Recency (last 7 days)
-  - Content length
-  - Source reputation
-- **Topic Filtering** (10+ AI categories)
-- **Real-time Search** with AI-powered results
+### **1. AI News Aggregation**
+- **30+ RSS Feeds:** Curated list of top AI/ML publications
+- **Social Media Integration:** Reddit, Hacker News, Lobsters, Slashdot, Product Hunt
+- **Real-time Updates:** Fresh content every 2-4 hours
+- **Quality Scoring:** AI-powered article ranking (0-10 scale)
+- **Trend Detection:** TF-IDF and spike detection algorithms
 
-### **2. Social Media Integration**
-- **Reddit** - AI subreddits (/r/MachineLearning, /r/artificial, etc.)
-- **Hacker News** - AI-related discussions
-- **Lobsters** - Tech community
-- **Slashdot** - Tech news
-- **Product Hunt** - AI products
+### **2. AI Creators & Influencers**
+- **Top AI Personalities:** Sam Altman, Elon Musk, Yann LeCun, Andrew Ng, etc.
+- **Twitter Integration:** Real-time tweet fetching from AI leaders
+- **YouTube Channels:** Latest videos from AI educators and researchers
+- **Manual Refresh:** Rate-limited content updates (10-minute intervals)
+- **Caching System:** Efficient content storage and retrieval
 
-### **3. Content Generation**
-- **Platform-Specific Templates:**
-  - Twitter/X Posts
-  - LinkedIn Articles
-  - Instagram Captions
-  - YouTube Scripts
-  - Blog Posts
-  - Newsletters
-- **Customization Options:**
-  - Length (very short, short, medium, long)
-  - Tone (professional, casual, technical, educational)
-  - Audience targeting
-  - Custom CTA
-- **AI-Powered:**
-  - Uses Groq Llama 3.3 70B
-  - Voice matching for personalization
-  - Emoji and hashtag integration
+### **3. Custom Sources Management**
+- **Multi-Platform Support:** Twitter, YouTube, RSS feeds
+- **User-Specific Sources:** Personalized content curation
+- **Source Type Filtering:** Filter content by platform type
+- **Latest Content Display:** Show most recent posts/videos
+- **Authentication Required:** Secure user-specific source management
 
-### **4. Newsletter System**
-- **Daily Digests** - Top 5 articles automatically selected
-- **AI Summaries** - Generated for each article
-- **Beautiful HTML Templates** - Professional design
-- **Scheduled Delivery** - User's preferred time
-- **Draft Management** - Review before sending
+### **4. Advanced Content Generation**
+- **Platform-Specific Templates:** Optimized for each platform
+- **Multiple Content Types:** Newsletter, Twitter, LinkedIn, YouTube, Instagram
+- **Length Control:** Very Short, Short, Medium, Long options
+- **Tone Customization:** Professional, Casual, Technical, Friendly
+- **Voice Matching:** Personalized content generation
+- **Structured Format:** Hook, Insight, Highlights, Implication, CTA, Hashtags
 
-### **5. Authentication & User Management**
-- **JWT-based Authentication** - Secure token management
-- **User Profiles** - Preferences and settings
-- **Role-based Access** - Admin, user roles
-- **Session Management** - Automatic token refresh
+### **5. Email Newsletter System**
+- **MailerSend Integration:** Professional email delivery
+- **Draft Management:** Create, edit, and approve newsletters
+- **Template System:** Beautiful HTML email templates
+- **Analytics Tracking:** Open rates, click-through rates, ROI
+- **Scheduled Sending:** Automated newsletter delivery
+
+### **6. Analytics Dashboard**
+- **Email Performance:** Opens, clicks, conversions
+- **Content Analytics:** Top-performing articles and sources
+- **Source Performance:** RSS feed health and engagement
+- **ROI Tracking:** Return on investment metrics
+- **Real-time Updates:** Live performance data
+
+### **7. User Authentication**
+- **JWT-based Auth:** Secure token-based authentication
+- **User Management:** Registration, login, profile management
+- **Guest Mode:** Limited functionality for non-authenticated users
+- **Session Management:** Persistent login sessions
 
 ---
 
 ## 🏗️ Architecture
 
-### **High-Level Architecture**
-
+### **System Architecture**
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                         FRONTEND                             │
-│  Next.js 15 + React + Tailwind CSS + shadcn/ui             │
-│  (Server Components + Client Components)                     │
-└────────────┬────────────────────────────────────────────────┘
-             │
-             │ HTTP/REST
-             ▼
-┌─────────────────────────────────────────────────────────────┐
-│                      API LAYER                               │
-│  Next.js API Routes (app/api/*)                             │
-│  - Authentication (JWT)                                      │
-│  - Data fetching & caching                                   │
-│  - Content generation                                        │
-└────────────┬────────────────────────────────────────────────┘
-             │
-             │
-    ┌────────┴────────┬──────────────┬──────────────┐
-    ▼                 ▼              ▼              ▼
-┌─────────┐     ┌──────────┐  ┌──────────┐  ┌──────────┐
-│Database │     │   AI/ML  │  │   Email  │  │   RSS    │
-│Supabase │     │   Groq   │  │MailerSend│  │  Feeds   │
-│PostgreSQL     │Llama 3.3 │  │          │  │  (30+)   │
-└─────────┘     └──────────┘  └──────────┘  └──────────┘
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Frontend      │    │   Backend       │    │   External      │
+│   (Next.js)     │◄──►│   (API Routes)  │◄──►│   Services      │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         │                       │                       │
+         ▼                       ▼                       ▼
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   UI Components  │    │   Supabase      │    │   Twitter API    │
+│   State Mgmt     │    │   Database      │    │   YouTube API    │
+│   Animations     │    │   Auth          │    │   MailerSend     │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
-### **Key Components**
-
-1. **RSS Parser (`lib/rss-parser.ts`)**
-   - Fetches and parses RSS feeds
-   - Calculates quality scores
-   - Filters recent articles (last 7 days)
-   - Handles errors and timeouts
-
-2. **LLM Service (`lib/llm-service.ts`)**
-   - Integrates with Groq Llama 3.3 70B
-   - Generates summaries and content
-   - Singleton pattern for efficiency
-   - Error handling and retries
-
-3. **Draft Generator (`lib/draft-generator.ts`)**
-   - Creates platform-specific content
-   - Uses content templates
-   - Voice matching for personalization
-   - Supports multiple content types
-
-4. **Content Templates (`lib/content-templates-v2.ts`)**
-   - Platform-specific formatting
-   - Length control (very short to long)
-   - Emoji and hashtag integration
-   - Professional output (no asterisks)
-
-5. **Email Service (`lib/email-service.ts`)**
-   - MailerSend integration
-   - HTML email templates
-   - Delivery tracking
-   - Error handling
+### **Data Flow Architecture**
+1. **Content Ingestion:** RSS feeds → Parser → Database
+2. **Social Media:** APIs → Processing → Caching → Display
+3. **Content Generation:** Articles → AI Processing → Templates → Output
+4. **User Interaction:** Frontend → API → Database → Response
+5. **Email Delivery:** Drafts → MailerSend → Analytics → Tracking
 
 ---
 
 ## 🔄 Data Flow
 
-### **Article Aggregation Flow**
-
+### **1. Content Aggregation Flow**
 ```
-RSS Feeds (30+) → RSS Parser → Quality Scoring → 
-In-Memory Cache → Database Storage (nightly) → 
-Frontend Display → User Selection
+RSS Feeds → RSS Parser → Quality Scoring → Database Storage → Frontend Display
+Social Media APIs → Content Processing → Caching → Real-time Updates
 ```
 
-### **Content Generation Flow**
-
+### **2. Content Generation Flow**
 ```
-User Selects Articles → Article Selector Component →
-Content Customizer (type, length, tone) →
-Draft Generator API →
-LLM Service (Groq) → Content Templates →
-Generated Draft → Draft Preview →
-User Approval → Email Delivery (optional)
+Article Selection → AI Processing → Template Application → Platform Optimization → Output
 ```
 
-### **Authentication Flow**
-
+### **3. User Interaction Flow**
 ```
-User Login → Auth API → JWT Generation →
-Set httpOnly Cookie → Verify Token →
-Protected Routes → Refresh Token (if needed)
+User Action → Frontend → API Route → Service Layer → Database → Response
+```
+
+### **4. Email Newsletter Flow**
+```
+Draft Creation → Review → Approval → MailerSend → Delivery → Analytics
 ```
 
 ---
@@ -285,231 +238,352 @@ Protected Routes → Refresh Token (if needed)
 ### **Authentication**
 - `POST /api/auth/login` - User login
 - `POST /api/auth/signup` - User registration
+- `GET /api/auth/me` - Get current user
 - `POST /api/auth/logout` - User logout
-- `GET /api/auth/verify` - Verify JWT token
 
-### **Articles**
-- `GET /api/articles` - Fetch articles (with filters)
-- `GET /api/article/[id]` - Get single article
+### **Articles & Content**
+- `GET /api/articles` - Fetch articles with filtering
+- `POST /api/articles/send` - Send article via email
+- `GET /api/social/topics` - Get trending social media topics
+- `GET /api/social/trending` - Get trending content
 
-### **Drafts**
-- `GET /api/drafts` - List user's drafts
-- `POST /api/drafts` - Generate new draft
-- `GET /api/drafts/[id]` - Get draft details
-- `PUT /api/drafts/[id]` - Update draft
-- `DELETE /api/drafts/[id]` - Delete draft
-- `POST /api/drafts/[id]/approve` - Approve and send
+### **AI Creators**
+- `GET /api/ai-creators` - Get AI creators and their content
+- `POST /api/ai-creators/refresh` - Manually refresh creator content
 
-### **Social Media**
-- `GET /api/social/reddit` - Get Reddit posts
-- `GET /api/social/hackernews` - Get Hacker News posts
-- `GET /api/social/trending` - Get trending topics
+### **Custom Sources**
+- `GET /api/sources` - Get user's custom sources
+- `POST /api/sources` - Add new custom source
+- `PUT /api/sources/[id]` - Update custom source
+- `DELETE /api/sources/[id]` - Delete custom source
+- `GET /api/custom-sources` - Get latest content from custom sources
+
+### **Drafts & Content Generation**
+- `GET /api/drafts` - Get user's drafts
+- `POST /api/drafts` - Create new draft
+- `GET /api/drafts/[id]` - Get specific draft
+- `POST /api/drafts/[id]/approve` - Approve and send draft
 
 ### **Analytics**
-- `GET /api/analytics` - Get user analytics
-- `GET /api/analytics/performance` - Content performance
+- `GET /api/analytics` - Get performance analytics
+- `GET /api/analytics/email` - Get email performance data
 
 ---
 
 ## 🗄️ Database Schema
 
-### **Key Tables**
+### **Core Tables**
 
-#### **users**
+#### **Users & Authentication**
 ```sql
-- id (uuid, primary key)
-- email (text, unique)
-- password_hash (text)
-- name (text)
-- created_at (timestamp)
-- role (text) - 'user' or 'admin'
+-- Users table (managed by Supabase Auth)
+auth.users
+
+-- User profiles
+user_profiles (
+  id UUID PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id),
+  email TEXT,
+  name TEXT,
+  preferences JSONB,
+  created_at TIMESTAMP DEFAULT NOW()
+)
 ```
 
-#### **feed_items**
+#### **Content Management**
 ```sql
-- id (uuid, primary key)
-- title (text)
-- content (text)
-- url (text, unique)
-- published_at (timestamp)
-- source (text)
-- quality_score (numeric)
-- topics (text[])
-- created_at (timestamp)
+-- RSS feed items
+feed_items (
+  id UUID PRIMARY KEY,
+  title TEXT NOT NULL,
+  content TEXT,
+  url TEXT UNIQUE,
+  source_name TEXT,
+  author TEXT,
+  published_at TIMESTAMP,
+  quality_score DECIMAL(3,1),
+  created_at TIMESTAMP DEFAULT NOW()
+)
+
+-- User sources (custom RSS, Twitter, YouTube)
+user_sources (
+  id UUID PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id),
+  source_type TEXT, -- 'rss', 'twitter', 'youtube'
+  source_identifier TEXT,
+  source_name TEXT,
+  priority_weight INTEGER DEFAULT 5,
+  enabled BOOLEAN DEFAULT true,
+  created_at TIMESTAMP DEFAULT NOW()
+)
 ```
 
-#### **drafts**
+#### **AI Creators System**
 ```sql
-- id (uuid, primary key)
-- user_id (uuid, foreign key)
-- title (text)
-- content (text)
-- metadata (jsonb) - content type, customization
-- status (text) - 'draft', 'sent', 'scheduled'
-- created_at (timestamp)
-- sent_at (timestamp)
+-- AI creators/influencers
+ai_creators (
+  id UUID PRIMARY KEY,
+  name TEXT NOT NULL,
+  handle TEXT UNIQUE,
+  platform TEXT, -- 'twitter', 'youtube'
+  title TEXT,
+  category TEXT, -- 'founder', 'researcher', 'educator', 'creator'
+  avatar_url TEXT,
+  verified BOOLEAN DEFAULT false,
+  profile_url TEXT,
+  display_order INTEGER DEFAULT 0,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMP DEFAULT NOW()
+)
+
+-- Cached tweets from AI creators
+cached_tweets (
+  id UUID PRIMARY KEY,
+  creator_id UUID REFERENCES ai_creators(id),
+  tweet_id TEXT UNIQUE,
+  content TEXT NOT NULL,
+  author_handle TEXT,
+  author_name TEXT,
+  created_at_twitter TIMESTAMP,
+  retweet_count INTEGER DEFAULT 0,
+  like_count INTEGER DEFAULT 0,
+  reply_count INTEGER DEFAULT 0,
+  url TEXT,
+  cached_at TIMESTAMP DEFAULT NOW()
+)
+
+-- Cached YouTube videos
+cached_youtube_videos (
+  id UUID PRIMARY KEY,
+  creator_id UUID REFERENCES ai_creators(id),
+  video_id TEXT UNIQUE,
+  title TEXT NOT NULL,
+  description TEXT,
+  thumbnail_url TEXT,
+  channel_name TEXT,
+  published_at TIMESTAMP,
+  view_count BIGINT DEFAULT 0,
+  like_count INTEGER DEFAULT 0,
+  url TEXT,
+  cached_at TIMESTAMP DEFAULT NOW()
+)
 ```
 
-#### **email_analytics**
+#### **Content Generation**
 ```sql
-- id (uuid, primary key)
-- draft_id (uuid, foreign key)
-- email (text)
-- opened (boolean)
-- clicked (boolean)
-- opened_at (timestamp)
-- clicked_at (timestamp)
+-- Content drafts
+drafts (
+  id UUID PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id),
+  title TEXT,
+  content TEXT,
+  content_type TEXT, -- 'newsletter', 'twitter', 'linkedin', etc.
+  status TEXT DEFAULT 'draft', -- 'draft', 'approved', 'sent'
+  metadata JSONB,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+)
+
+-- Content templates
+content_templates (
+  id UUID PRIMARY KEY,
+  platform TEXT,
+  template_name TEXT,
+  structure JSONB,
+  max_length INTEGER,
+  created_at TIMESTAMP DEFAULT NOW()
+)
+```
+
+#### **Analytics & Tracking**
+```sql
+-- Email analytics
+email_analytics (
+  id UUID PRIMARY KEY,
+  draft_id UUID REFERENCES drafts(id),
+  recipient_email TEXT,
+  opened_at TIMESTAMP,
+  clicked_at TIMESTAMP,
+  conversion_data JSONB,
+  created_at TIMESTAMP DEFAULT NOW()
+)
+
+-- Content refresh logs
+content_refresh_log (
+  id UUID PRIMARY KEY,
+  platform TEXT,
+  refresh_type TEXT, -- 'manual', 'scheduled'
+  creators_refreshed INTEGER,
+  items_fetched INTEGER,
+  items_cached INTEGER,
+  success BOOLEAN,
+  error_message TEXT,
+  refreshed_at TIMESTAMP DEFAULT NOW()
+)
 ```
 
 ---
 
 ## 🔐 Environment Variables
 
-Required variables in `.env.local`:
-
+### **Required Variables**
 ```bash
-# Database
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+# Database Configuration
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 
 # Authentication
-JWT_SECRET=your_jwt_secret_key
+JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
 
-# AI/ML
-GROQ_API_KEY=your_groq_api_key
+# AI/ML Services
+GROQ_API_KEY=gsk_your_groq_api_key_here
 
-# Email
-MAILERSEND_API_KEY=your_mailersend_api_key
+# Email Service
+MAILERSEND_API_KEY=mlsn.your_mailersend_api_key
+MAILERSEND_FROM_EMAIL=your_from_email
+MAILERSEND_FROM_NAME=CreatorPulse
+MAILERSEND_ADMIN_EMAIL=your_admin_email
 
-# Twitter/X (Optional)
-TWITTER_API_KEY=your_twitter_api_key
-TWITTER_API_SECRET=your_twitter_api_secret
-TWITTER_ACCESS_TOKEN=your_access_token
-TWITTER_ACCESS_TOKEN_SECRET=your_access_token_secret
+# External APIs (Optional)
+TWITTER_BEARER_TOKEN=your_twitter_bearer_token
+YOUTUBE_API_KEY=your_youtube_api_key
+
+# Security & Encryption
+ENCRYPTION_PASSWORD=your-encryption-password-min-32-chars
+
+# Application Configuration
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+NODE_ENV=development
 ```
+
+### **API Key Setup Guide**
+
+#### **Twitter/X API**
+1. Go to https://developer.twitter.com/en/portal/dashboard
+2. Create a new project and app
+3. Generate Bearer Token
+4. Add to `TWITTER_BEARER_TOKEN`
+
+#### **YouTube API**
+1. Go to https://console.developers.google.com/
+2. Enable YouTube Data API v3
+3. Create credentials (API Key)
+4. Add to `YOUTUBE_API_KEY`
+
+#### **MailerSend**
+1. Sign up at https://www.mailersend.com/
+2. Get API key from dashboard
+3. Add to `MAILERSEND_API_KEY`
+
+#### **Groq AI**
+1. Sign up at https://console.groq.com/
+2. Generate API key
+3. Add to `GROQ_API_KEY`
 
 ---
 
 ## 🚀 Setup Instructions
 
-### **Prerequisites**
-- Node.js 18+ and npm/pnpm
+### **1. Prerequisites**
+- Node.js 18+ installed
+- Git installed
 - Supabase account
-- Groq API key
-- MailerSend API key
+- API keys for external services
 
-### **Installation Steps**
-
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd creatorpulse
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   # or
-   pnpm install
-   ```
-
-3. **Set up environment variables**
-   ```bash
-   cp .env.example .env.local
-   # Edit .env.local with your credentials
-   ```
-
-4. **Set up database**
-   ```bash
-   # Run the schema in Supabase SQL Editor
-   cat supabase/QUICK_SETUP.sql
-   ```
-
-5. **Add RSS feeds**
-   ```bash
-   npm run add-sources
-   ```
-
-6. **Create admin user**
-   ```bash
-   npm run create-admin
-   ```
-
-7. **Run development server**
-   ```bash
-   npm run dev
-   ```
-
-8. **Open browser**
-   ```
-   http://localhost:3000
-   ```
-
----
-
-## 👨‍💻 Development Guide
-
-### **Key Commands**
-
+### **2. Clone Repository**
 ```bash
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run start        # Start production server
-npm run lint         # Run ESLint
-npm run type-check   # Check TypeScript types
+git clone https://github.com/your-username/creatorpulse.git
+cd creatorpulse
 ```
 
-### **Adding New Features**
+### **3. Install Dependencies**
+```bash
+npm install
+```
 
-1. **New API Route**
-   - Create file in `app/api/[route]/route.ts`
-   - Export GET, POST, PUT, DELETE handlers
-   - Use `getUserFromToken()` for authentication
+### **4. Environment Setup**
+```bash
+# Copy environment template
+cp .env.example .env.local
 
-2. **New Component**
-   - Create in `components/[name].tsx`
-   - Use TypeScript for type safety
-   - Follow existing component patterns
+# Edit .env.local with your values
+nano .env.local
+```
 
-3. **New Library Function**
-   - Create in `lib/[name].ts`
-   - Export functions/classes
-   - Add error handling
+### **5. Database Setup**
+```bash
+# Apply main schema
+# Go to Supabase Dashboard → SQL Editor
+# Copy and run contents of supabase/schema.sql
 
-4. **New Content Template**
-   - Edit `lib/content-templates-v2.ts`
-   - Add new template with `generatePrompt` and `formatOutput`
+# Apply AI creators schema
+# Copy and run contents of supabase/AI_CREATORS_SCHEMA.sql
+```
 
-### **Code Style**
-- **TypeScript:** Strict mode enabled
-- **Formatting:** Prettier (via .prettierrc)
-- **Linting:** ESLint (via .eslintrc)
-- **Components:** Functional components with hooks
-- **Naming:** camelCase for functions, PascalCase for components
+### **6. Start Development Server**
+```bash
+npm run dev
+```
+
+### **7. Verify Setup**
+- Visit http://localhost:3000
+- Check all API endpoints are working
+- Test authentication flow
+- Verify external API connections
 
 ---
 
-## 🌐 Deployment
+## 💻 Development Guide
 
-### **Vercel (Recommended)**
+### **Project Structure**
+- **`/app`**: Next.js App Router pages and API routes
+- **`/components`**: Reusable React components
+- **`/lib`**: Core business logic and services
+- **`/supabase`**: Database schemas and migrations
+- **`/public`**: Static assets and images
 
-1. **Connect repository**
-   - Import project in Vercel dashboard
-   - Select Next.js framework preset
+### **Code Style**
+- **TypeScript**: Strict mode enabled
+- **ESLint**: Configured for Next.js
+- **Prettier**: Code formatting
+- **Conventional Commits**: Git commit messages
 
-2. **Configure environment variables**
-   - Add all variables from `.env.local`
-   - Save and deploy
+### **Development Workflow**
+1. Create feature branch from `main`
+2. Implement changes with tests
+3. Update documentation
+4. Create pull request
+5. Code review and merge
 
-3. **Set up domain** (optional)
-   - Add custom domain in settings
-   - Update DNS records
+### **Testing**
+- **Unit Tests**: Jest + React Testing Library
+- **Integration Tests**: API endpoint testing
+- **E2E Tests**: Playwright (optional)
 
-### **Other Platforms**
-- **Netlify:** Use Next.js build plugin
-- **Railway:** Connect GitHub repo
-- **Self-hosted:** Run `npm run build` and `npm run start`
+---
+
+## 🚀 Deployment
+
+### **Vercel Deployment (Recommended)**
+1. Connect GitHub repository to Vercel
+2. Set environment variables in Vercel dashboard
+3. Deploy automatically on push to `main`
+
+### **Manual Deployment**
+```bash
+# Build production version
+npm run build
+
+# Start production server
+npm start
+```
+
+### **Environment Variables for Production**
+- Update all API keys for production
+- Set `NODE_ENV=production`
+- Update `NEXT_PUBLIC_APP_URL` to production domain
+- Ensure JWT secret is secure
 
 ---
 
@@ -517,58 +591,418 @@ npm run type-check   # Check TypeScript types
 
 ### **Common Issues**
 
-1. **Database Connection Error**
-   - Verify `NEXT_PUBLIC_SUPABASE_URL` and keys
-   - Check network connectivity
-   - Ensure schema is set up correctly
+#### **Database Connection Issues**
+```bash
+# Check Supabase URL and keys
+# Verify network connectivity
+# Check database permissions
+```
 
-2. **JWT Authentication Error**
-   - Verify `JWT_SECRET` is set
-   - Check token expiration
-   - Clear cookies and login again
+#### **API Rate Limiting**
+- **Twitter API**: Free tier has 100 requests/month
+- **YouTube API**: Free tier has 10,000 units/day
+- **Solution**: Implement caching and rate limiting
 
-3. **RSS Feed Not Loading**
-   - Check `config.json` for valid URLs
-   - Verify network access to RSS feeds
-   - Check logs for parsing errors
+#### **Authentication Issues**
+- Check JWT secret configuration
+- Verify Supabase auth setup
+- Check cookie settings
 
-4. **Content Generation Failing**
-   - Verify `GROQ_API_KEY` is valid
-   - Check API rate limits
-   - Review error messages in console
+#### **Content Generation Issues**
+- Verify Groq API key
+- Check content template configuration
+- Review AI prompt engineering
 
-5. **Email Not Sending**
-   - Verify `MAILERSEND_API_KEY`
-   - Check email templates
-   - Review MailerSend logs
+### **Debug Mode**
+```bash
+# Enable debug logging
+DEBUG=creatorpulse:* npm run dev
+```
 
----
-
-## 📚 Additional Resources
-
-- **README.md** - Project overview and quick start
-- **PRD.md** - Complete product requirements
-- **PRESENTATION_SIMPLE.md** - 7-slide presentation
-- **docs-backup/** - Historical documentation
-
----
-
-## 🤝 Contributing
-
-When contributing to this project:
-1. Follow the existing code style
-2. Add TypeScript types
-3. Test thoroughly before committing
-4. Update documentation as needed
-5. Create descriptive commit messages
+### **Performance Optimization**
+- Enable Redis caching for production
+- Implement CDN for static assets
+- Optimize database queries
+- Use Next.js Image optimization
 
 ---
 
-## 📄 License
+## 🆕 Recent Updates
 
-This project is proprietary and confidential.
+### **Version 2.0 (October 2025)**
+
+#### **AI Creators Feature**
+- **New Page**: `/ai-creators` with Twitter and YouTube tabs
+- **Top AI Personalities**: Sam Altman, Elon Musk, Yann LeCun, Andrew Ng, etc.
+- **Real-time Content**: Latest tweets and videos from AI leaders
+- **Manual Refresh**: Rate-limited content updates (10-minute intervals)
+- **Database Schema**: 4 new tables for creators and cached content
+
+#### **Custom Sources System**
+- **Multi-Platform Support**: Twitter, YouTube, RSS feeds
+- **User-Specific Sources**: Personalized content curation
+- **Source Type Filtering**: Filter content by platform type
+- **Latest Content Display**: Show most recent posts/videos
+- **Authentication Required**: Secure user-specific source management
+
+#### **Enhanced Content Generation**
+- **Platform-Specific Templates**: Optimized for each platform
+- **Very Short Content**: New length option for micro-content
+- **Structured Format**: Hook, Insight, Highlights, Implication, CTA, Hashtags
+- **Professional Formatting**: Removed asterisks, improved readability
+- **Emoji Integration**: Platform-appropriate emoji usage
+- **Hashtag Optimization**: Smart hashtag placement
+
+#### **YouTube Integration Improvements**
+- **RSS-Based Approach**: No API key required for basic functionality
+- **URL Parsing**: Support for various YouTube URL formats
+- **Channel Discovery**: Automatic channel ID extraction
+- **Fallback Methods**: Multiple extraction patterns for reliability
+- **Error Handling**: Graceful degradation for failed extractions
+
+#### **Twitter Integration**
+- **API v2 Support**: Modern Twitter API integration
+- **Bearer Token Auth**: Secure authentication method
+- **Rate Limit Handling**: Proper error handling and retry logic
+- **Content Caching**: Efficient storage and retrieval system
+
+#### **UI/UX Improvements**
+- **Matrix Hero Animation**: Dynamic background with falling characters
+- **Theme Integration**: Consistent color palette throughout
+- **Responsive Design**: Mobile-optimized interface
+- **Loading States**: Better user feedback during operations
+- **Error Handling**: User-friendly error messages
+
+#### **Performance Optimizations**
+- **Caching System**: In-memory and database caching
+- **Parallel Processing**: Concurrent API requests
+- **Database Optimization**: Improved query performance
+- **Error Recovery**: Graceful handling of API failures
 
 ---
 
-**For questions or support, contact the development team.**
+## 🤖 AI Creators Feature
 
+### **Overview**
+The AI Creators feature provides real-time access to content from top AI personalities and educators across Twitter and YouTube platforms.
+
+### **Features**
+- **10 Twitter Personalities**: Including Sam Altman, Elon Musk, Yann LeCun, Andrew Ng, Andrej Karpathy, Demis Hassabis, Dario Amodei, Fei-Fei Li, Geoffrey Hinton, Lex Fridman
+- **10 YouTube Channels**: Including Two Minute Papers, Lex Fridman, Yannic Kilcher, AI Explained, Matt Wolfe, AI Coffee Break, The AI Advantage, Sentdex, 3Blue1Brown, Code Emporium
+- **Real-time Updates**: Manual refresh with rate limiting
+- **Content Caching**: Efficient storage and retrieval system
+- **Platform Tabs**: Separate views for Twitter and YouTube content
+
+### **Database Schema**
+```sql
+-- AI creators master list
+ai_creators (
+  id, name, handle, platform, title, category,
+  avatar_url, verified, profile_url, display_order, is_active
+)
+
+-- Cached tweets
+cached_tweets (
+  id, creator_id, tweet_id, content, author_handle,
+  created_at_twitter, retweet_count, like_count, reply_count, url
+)
+
+-- Cached YouTube videos
+cached_youtube_videos (
+  id, creator_id, video_id, title, description,
+  thumbnail_url, published_at, view_count, like_count, url
+)
+
+-- Refresh tracking
+content_refresh_log (
+  id, platform, refresh_type, creators_refreshed,
+  items_fetched, items_cached, success, error_message
+)
+```
+
+### **API Endpoints**
+- `GET /api/ai-creators?platform=twitter|youtube` - Get creators and content
+- `POST /api/ai-creators/refresh` - Manually refresh content
+
+### **Rate Limiting**
+- **Manual Refresh**: Maximum once every 10 minutes per platform
+- **API Usage**: Optimized to minimize external API calls
+- **Caching**: Content cached for efficient retrieval
+
+---
+
+## 🔗 Custom Sources System
+
+### **Overview**
+The Custom Sources system allows users to add their own content sources (Twitter accounts, YouTube channels, RSS feeds) for personalized content curation.
+
+### **Supported Platforms**
+- **Twitter/X**: User handles and accounts
+- **YouTube**: Channel names, handles, or full URLs
+- **RSS Feeds**: Any valid RSS feed URL
+
+### **Features**
+- **User-Specific Sources**: Each user can add their own sources
+- **Source Type Filtering**: Filter content by platform type
+- **Latest Content Display**: Show most recent posts/videos
+- **Authentication Required**: Secure user-specific source management
+- **Source Validation**: Real-time validation of source URLs and handles
+
+### **Database Schema**
+```sql
+-- User custom sources
+user_sources (
+  id, user_id, source_type, source_identifier,
+  source_name, priority_weight, enabled, metadata
+)
+```
+
+### **API Endpoints**
+- `GET /api/sources` - Get user's custom sources
+- `POST /api/sources` - Add new custom source
+- `PUT /api/sources/[id]` - Update custom source
+- `DELETE /api/sources/[id]` - Delete custom source
+- `GET /api/custom-sources?sourceType=...` - Get latest content
+
+### **Source Management**
+- **Add Sources**: Through `/sources` page
+- **Edit Sources**: Update source details and settings
+- **Delete Sources**: Remove unwanted sources
+- **Enable/Disable**: Toggle source activity
+
+---
+
+## 📝 Content Generation System
+
+### **Overview**
+The Content Generation system creates platform-specific content from curated articles using advanced AI templates and customization options.
+
+### **Supported Platforms**
+- **Newsletter**: Email newsletter format
+- **Twitter/X**: Tweet format with hashtags
+- **LinkedIn**: Professional article format
+- **YouTube**: Video script format
+- **Instagram**: Caption format with emojis
+- **Blog Post**: Long-form article format
+
+### **Content Structure**
+Each platform follows a specific structure:
+1. **Hook/Opening Line**: Attention-grabbing introduction
+2. **Main Insight/Key Message**: Core information
+3. **Highlights/Bullet Points**: Key takeaways
+4. **Implication/Takeaway**: What it means for readers
+5. **Call to Action (CTA)**: What readers should do
+6. **Hashtags/Keywords**: Platform-appropriate tags
+
+### **Customization Options**
+- **Length**: Very Short, Short, Medium, Long
+- **Tone**: Professional, Casual, Technical, Friendly
+- **Audience**: General, Technical, Business, Academic
+- **CTA**: Custom call-to-action options
+- **Voice Matching**: Personalized content generation
+
+### **Templates System**
+```typescript
+interface ContentTemplate {
+  platform: string;
+  generatePrompt: (article: Article, customization: Customization) => string;
+  formatOutput: (content: string) => string;
+  maxLength: number;
+  structure: string[];
+}
+```
+
+### **API Endpoints**
+- `POST /api/drafts` - Create new content draft
+- `GET /api/drafts` - Get user's drafts
+- `GET /api/drafts/[id]` - Get specific draft
+- `POST /api/drafts/[id]/approve` - Approve and send draft
+
+---
+
+## 📺 YouTube Integration
+
+### **Overview**
+YouTube integration provides access to video content from AI educators and researchers using RSS feeds and optional API integration.
+
+### **RSS-Based Approach**
+- **No API Key Required**: Uses YouTube RSS feeds for basic functionality
+- **Unlimited Usage**: No rate limits on RSS feeds
+- **Channel Support**: Works with any public YouTube channel
+- **Real-time Updates**: Latest videos automatically fetched
+
+### **URL Format Support**
+- **Full URLs**: `https://www.youtube.com/@username`
+- **Channel URLs**: `https://www.youtube.com/channel/UCxxxxxx`
+- **Handles**: `@username` or `username`
+- **Channel IDs**: `UCxxxxxx` format
+
+### **Channel Discovery Process**
+1. **URL Parsing**: Extract channel identifier from various formats
+2. **Channel Page Fetch**: Visit YouTube channel page
+3. **ID Extraction**: Extract channel ID using multiple patterns
+4. **RSS URL Generation**: Create RSS feed URL
+5. **Content Fetching**: Parse RSS feed for latest videos
+
+### **Error Handling**
+- **Multiple Patterns**: 8 different regex patterns for ID extraction
+- **Fallback Methods**: YouTube Search API as backup
+- **Graceful Degradation**: Clear error messages for users
+- **Debug Logging**: Detailed logs for troubleshooting
+
+### **API Integration (Optional)**
+- **Enhanced Metadata**: View counts, likes, comments
+- **Channel Information**: Subscriber counts, descriptions
+- **Search Functionality**: Find channels by name
+- **Rate Limits**: 10,000 units/day on free tier
+
+---
+
+## 🐦 Twitter Integration
+
+### **Overview**
+Twitter integration provides real-time access to tweets from AI personalities and custom user accounts using Twitter API v2.
+
+### **API Configuration**
+- **Bearer Token**: Secure authentication method
+- **API v2**: Modern Twitter API with enhanced features
+- **Rate Limits**: 100 requests/month on free tier
+- **Error Handling**: Proper retry logic and fallback
+
+### **Content Fetching**
+- **User Timeline**: Latest tweets from specific accounts
+- **Tweet Metrics**: Likes, retweets, replies, quotes
+- **Media Support**: Images and videos in tweets
+- **Caching System**: Efficient storage and retrieval
+
+### **Rate Limit Management**
+- **Request Optimization**: Minimize API calls
+- **Caching Strategy**: Store content for extended periods
+- **Error Recovery**: Graceful handling of rate limits
+- **User Feedback**: Clear messages about rate limits
+
+### **Content Processing**
+- **Tweet Parsing**: Extract text, metrics, and metadata
+- **Media Handling**: Process images and videos
+- **Link Processing**: Extract and validate URLs
+- **Content Filtering**: Remove retweets and spam
+
+---
+
+## 📊 Analytics & Performance
+
+### **Email Analytics**
+- **Open Rates**: Track email opens
+- **Click-through Rates**: Monitor link clicks
+- **Conversion Tracking**: Measure ROI
+- **Performance Metrics**: Detailed analytics dashboard
+
+### **Content Analytics**
+- **Top Articles**: Most popular content
+- **Source Performance**: RSS feed health and engagement
+- **User Engagement**: Content interaction metrics
+- **Trend Analysis**: Content performance over time
+
+### **System Performance**
+- **API Response Times**: Monitor external API performance
+- **Database Performance**: Query optimization and indexing
+- **Caching Efficiency**: Cache hit rates and performance
+- **Error Rates**: System reliability metrics
+
+---
+
+## 🔒 Security & Privacy
+
+### **Authentication**
+- **JWT Tokens**: Secure token-based authentication
+- **Session Management**: Persistent login sessions
+- **Password Security**: Encrypted password storage
+- **API Security**: Secure API key management
+
+### **Data Protection**
+- **User Data**: Encrypted storage of sensitive information
+- **API Keys**: Secure environment variable management
+- **Database Security**: Row-level security policies
+- **Privacy Compliance**: GDPR and privacy best practices
+
+### **Rate Limiting**
+- **API Rate Limits**: Prevent abuse of external APIs
+- **User Rate Limits**: Limit user actions to prevent spam
+- **Content Refresh Limits**: Prevent excessive API usage
+- **Error Handling**: Graceful degradation under load
+
+---
+
+## 🚀 Future Roadmap
+
+### **Planned Features**
+- **LinkedIn Integration**: Professional content sharing
+- **Instagram Integration**: Visual content optimization
+- **TikTok Integration**: Short-form video content
+- **Podcast Integration**: Audio content generation
+- **Multi-language Support**: International content creation
+- **Advanced Analytics**: Detailed performance insights
+- **Team Collaboration**: Multi-user content creation
+- **Content Scheduling**: Automated publishing
+- **A/B Testing**: Content optimization
+- **AI Voice Generation**: Audio content creation
+
+### **Technical Improvements**
+- **Real-time Updates**: WebSocket integration
+- **Advanced Caching**: Redis implementation
+- **CDN Integration**: Global content delivery
+- **Mobile App**: Native mobile application
+- **API Versioning**: Backward compatibility
+- **Microservices**: Scalable architecture
+- **Machine Learning**: Content recommendation engine
+- **Blockchain Integration**: Content ownership verification
+
+---
+
+## 📞 Support & Community
+
+### **Documentation**
+- **API Documentation**: Comprehensive API reference
+- **User Guide**: Step-by-step user instructions
+- **Developer Guide**: Technical implementation details
+- **Troubleshooting**: Common issues and solutions
+
+### **Community**
+- **GitHub Repository**: Open source development
+- **Issue Tracking**: Bug reports and feature requests
+- **Discussions**: Community support and ideas
+- **Contributing**: Guidelines for contributors
+
+### **Support Channels**
+- **Email Support**: Direct technical support
+- **Documentation**: Self-service help resources
+- **Community Forum**: Peer-to-peer support
+- **Video Tutorials**: Visual learning resources
+
+---
+
+## 📄 License & Legal
+
+### **License**
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+### **Third-party Services**
+- **Supabase**: Database and authentication services
+- **MailerSend**: Email delivery services
+- **Groq**: AI/ML processing services
+- **Twitter**: Social media API services
+- **YouTube**: Video platform API services
+
+### **Privacy Policy**
+- **Data Collection**: Minimal user data collection
+- **Data Usage**: Content creation and delivery only
+- **Data Sharing**: No third-party data sharing
+- **Data Retention**: Configurable retention periods
+
+---
+
+**CreatorPulse** - Empowering content creators with AI-driven content curation and generation. Built with ❤️ for the AI community.
+
+*Last Updated: October 22, 2025*
+*Version: 2.0*
+*Status: Production Ready*
