@@ -318,6 +318,37 @@ export class CustomSourcesService {
   }
 
   /**
+   * Search for YouTube channel using Search API
+   */
+  private async searchChannelByHandle(handle: string): Promise<{ channelId: string; channelName: string } | null> {
+    try {
+      const apiKey = process.env.YOUTUBE_API_KEY;
+      if (!apiKey) return null;
+      
+      const searchQuery = handle.replace('@', '');
+      const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=channel&q=${encodeURIComponent(searchQuery)}&maxResults=1&key=${apiKey}`;
+      
+      console.log(`🔍 Searching YouTube API for: ${searchQuery}`);
+      const response = await fetch(searchUrl);
+      const data = await response.json();
+      
+      if (data.items && data.items.length > 0) {
+        const channel = data.items[0];
+        const channelId = channel.snippet.channelId;
+        const channelName = channel.snippet.title;
+        
+        console.log(`✅ Found channel via Search API: ${channelName} (${channelId})`);
+        return { channelId, channelName };
+      }
+      
+      return null;
+    } catch (error) {
+      console.log(`❌ YouTube Search API error: ${error}`);
+      return null;
+    }
+  }
+
+  /**
    * Fetch from YouTube via RSS (no API key needed!)
    */
   private async fetchFromYouTube(source: CustomSource): Promise<FetchedContent[]> {
@@ -362,19 +393,59 @@ export class CustomSourcesService {
           });
           const html = await response.text();
           
-          // Extract channel ID from page
-          const match = html.match(/"channelId":"(UC[^"]+)"/);
-          if (match && match[1]) {
-            channelId = match[1];
+          // Extract channel ID from page using multiple patterns
+          const patterns = [
+            /"channelId":"(UC[a-zA-Z0-9_-]{22})"/,
+            /"externalId":"(UC[a-zA-Z0-9_-]{22})"/,
+            /"ucid":"(UC[a-zA-Z0-9_-]{22})"/,
+            /channelId["\s]*:["\s]*"(UC[a-zA-Z0-9_-]{22})"/,
+            /"browseId":"(UC[a-zA-Z0-9_-]{22})"/,
+            /"channelId":"(UC[a-zA-Z0-9_-]{22})"/g,
+            /"externalId":"(UC[a-zA-Z0-9_-]{22})"/g,
+            /"ucid":"(UC[a-zA-Z0-9_-]{22})"/g
+          ];
+          
+          let foundChannelId = null;
+          for (const pattern of patterns) {
+            const match = html.match(pattern);
+            if (match && match[1]) {
+              foundChannelId = match[1];
+              console.log(`✅ Found channel ID with pattern: ${pattern}, ID: ${foundChannelId}`);
+              break;
+            }
+          }
+          
+          if (foundChannelId) {
+            channelId = foundChannelId;
             rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
-            console.log(`✅ Found channel ID: ${channelId}, RSS URL: ${rssUrl}`);
+            console.log(`✅ Using channel ID: ${channelId}, RSS URL: ${rssUrl}`);
           } else {
-            console.log(`❌ Could not find channel ID in page HTML`);
+            console.log(`❌ Could not find channel ID in page HTML with any pattern`);
+            console.log(`🔍 HTML snippet (first 1000 chars): ${html.substring(0, 1000)}`);
             throw new Error('Could not find channel ID');
           }
         } catch (error) {
           console.log(`❌ Error fetching channel page: ${error}`);
-          throw new Error(`Could not fetch channel ${handle}. Please use Channel ID (UC...) instead.`);
+          
+          // Fallback: Try YouTube Search API if available
+          if (process.env.YOUTUBE_API_KEY) {
+            console.log(`🔄 Trying YouTube Search API fallback...`);
+            try {
+              const searchResult = await this.searchChannelByHandle(handle);
+              if (searchResult) {
+                channelId = searchResult.channelId;
+                rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
+                console.log(`✅ Found channel via Search API: ${channelId}, RSS URL: ${rssUrl}`);
+              } else {
+                throw new Error('Channel not found via Search API');
+              }
+            } catch (apiError) {
+              console.log(`❌ YouTube Search API also failed: ${apiError}`);
+              throw new Error(`Could not fetch channel ${handle}. Please try using the full YouTube URL or Channel ID (UC...).`);
+            }
+          } else {
+            throw new Error(`Could not fetch channel ${handle}. Please try using the full YouTube URL or Channel ID (UC...).`);
+          }
         }
       } else {
         throw new Error('Invalid YouTube identifier. Use Channel ID (UC...) or handle (@username)');
