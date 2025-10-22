@@ -48,6 +48,37 @@ export class LLMService {
   }
 
   /**
+   * Generic completion method for flexible text generation
+   */
+  async complete(
+    prompt: string,
+    options?: {
+      maxTokens?: number;
+      temperature?: number;
+    }
+  ): Promise<string> {
+    try {
+      if (!process.env.GROQ_API_KEY) {
+        console.warn('GROQ_API_KEY not configured');
+        return 'Content generation unavailable - API key not configured';
+      }
+
+      const completion = await this.groq.chat.completions.create({
+        model: this.model,
+        messages: [{ role: 'user', content: prompt }],
+        temperature: options?.temperature || 0.7,
+        max_tokens: options?.maxTokens || 2048,
+      });
+
+      return completion.choices[0]?.message?.content || '';
+
+    } catch (error: any) {
+      console.error('LLM completion error:', error.message);
+      throw new Error(`Failed to generate content: ${error.message}`);
+    }
+  }
+
+  /**
    * Generate content based on mode (AI News or Science Breakthroughs)
    */
   async generateContent(
@@ -362,3 +393,13 @@ export async function testGroq(): Promise<{ success: boolean; message: string }>
 }
 
 export { groq as llmClient };
+
+// Singleton instance
+let llmServiceInstance: LLMService | null = null;
+
+export function getLLMService(): LLMService {
+  if (!llmServiceInstance) {
+    llmServiceInstance = new LLMService();
+  }
+  return llmServiceInstance;
+}

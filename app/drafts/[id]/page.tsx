@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { DraftPreview } from '@/components/draft-preview'
 import { toast } from 'sonner'
 import { 
   Save, Send, Eye, Edit3, Loader2, ArrowLeft, Clock, 
@@ -230,59 +231,16 @@ export default function DraftEditorPage() {
 
         {/* Preview Mode */}
         <TabsContent value="preview" className="space-y-6">
-          {/* Introduction */}
-          <Card className="p-6">
-            <h3 className="mb-3 text-sm font-semibold text-muted-foreground">INTRODUCTION</h3>
-            <p className="whitespace-pre-wrap text-base leading-relaxed">{editedIntro}</p>
-          </Card>
-
-          {/* Articles */}
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-muted-foreground">CURATED ARTICLES</h3>
-            {draft.curated_articles.map((article, index) => (
-              <Card key={index} className="p-6">
-                <div className="mb-3 flex items-start justify-between">
-                  <h4 className="flex-1 text-lg font-semibold">{article.title}</h4>
-                  <Badge variant="outline">{article.source}</Badge>
-                </div>
-                <p className="mb-3 text-muted-foreground">{article.summary}</p>
-                {article.commentary && (
-                  <div className="rounded-lg border-l-4 border-primary bg-primary/5 p-3">
-                    <p className="text-sm italic">{article.commentary}</p>
-                  </div>
-                )}
-                <a
-                  href={article.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-3 inline-block text-sm text-primary hover:underline"
-                >
-                  Read full article →
-                </a>
-              </Card>
-            ))}
-          </div>
-
-          {/* Trends Section */}
-          {draft.trends_section?.top_3_trends && draft.trends_section.top_3_trends.length > 0 && (
-            <Card className="p-6 bg-gradient-to-br from-accent/10 to-primary/10">
-              <h3 className="mb-4 text-lg font-semibold">🔥 Trends to Watch</h3>
-              <div className="space-y-3">
-                {draft.trends_section.top_3_trends.map((trend: any, index: number) => (
-                  <div key={index}>
-                    <h4 className="font-semibold">{index + 1}. {trend.topic}</h4>
-                    <p className="text-sm text-muted-foreground">{trend.explainer}</p>
-                  </div>
-                ))}
-              </div>
-            </Card>
-          )}
-
-          {/* Closing */}
-          <Card className="p-6">
-            <h3 className="mb-3 text-sm font-semibold text-muted-foreground">CLOSING</h3>
-            <p className="whitespace-pre-wrap text-base leading-relaxed">{editedClosing}</p>
-          </Card>
+          <DraftPreview
+            draft={{
+              ...draft,
+              content_intro: editedIntro,
+              closing: editedClosing,
+            }}
+            contentType={draft.metadata?.content_type}
+            onEdit={() => setMode('edit')}
+            onApprove={handleApproveAndSend}
+          />
         </TabsContent>
 
         {/* Edit Mode */}

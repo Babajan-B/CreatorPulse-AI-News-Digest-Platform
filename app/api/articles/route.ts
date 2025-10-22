@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
     // Fetch from RSS feeds
     const articles = await fetchAllRSSFeeds(limitNumber);
     
-    // Save to Supabase as feed_items (async, don't wait)
+    // Save to Supabase as feed_items (MUST WAIT to get database IDs)
     if (articles.length > 0) {
       const feedItems: FeedItem[] = articles.map(a => ({
         id: a.id,
@@ -61,12 +61,42 @@ export async function GET(request: NextRequest) {
         tags: a.tags,
       }));
 
-      // Save in background
-      saveFeedItems(feedItems).catch(err => {
-        console.error('Background save error:', err);
-      });
+      // Save and wait for database IDs
+      const saveResult = await saveFeedItems(feedItems);
+      if (saveResult.success) {
+        console.log(`💾 Saved ${saveResult.count} items to database`);
+      } else {
+        console.error('Error saving feed items:', saveResult.error);
+      }
+      
+      // Now fetch from database to get proper UUIDs
+      const dbResult = await getRecentFeedItems(7, limitNumber);
+      if (dbResult.success && dbResult.items.length > 0) {
+        console.log(`✅ Returning ${dbResult.items.length} articles with database IDs`);
+        return NextResponse.json({
+          success: true,
+          count: dbResult.items.length,
+          articles: dbResult.items.map((item: any) => ({
+            id: item.id, // This is the database UUID
+            title: item.title,
+            summary: item.summary,
+            url: item.url,
+            source: item.source_name,
+            sourceLogo: item.source_logo,
+            qualityScore: 8.0, // Will be from scores table later
+            publishedAt: item.published_at,
+            author: item.author,
+            imageUrl: item.image_url,
+            tags: item.tags || [],
+          })),
+          cached: false,
+          database: 'supabase',
+        });
+      }
     }
     
+    // Fallback: return RSS articles if database save failed
+    console.warn('⚠️ Returning RSS articles without database IDs');
     return NextResponse.json({
       success: true,
       count: articles.length,

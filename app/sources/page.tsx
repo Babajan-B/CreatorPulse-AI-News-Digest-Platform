@@ -222,8 +222,8 @@ export default function SourcesPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="source-identifier">
-                  {sourceType === 'twitter' && 'Twitter Handle (e.g., @username)'}
-                  {sourceType === 'youtube' && 'YouTube Channel ID'}
+                  {sourceType === 'twitter' && 'Twitter Handle'}
+                  {sourceType === 'youtube' && 'YouTube Channel Name or Handle'}
                   {sourceType === 'rss' && 'RSS Feed URL'}
                 </Label>
                 <Input
@@ -231,11 +231,39 @@ export default function SourcesPage() {
                   value={sourceIdentifier}
                   onChange={(e) => setSourceIdentifier(e.target.value)}
                   placeholder={
-                    sourceType === 'twitter' ? '@elonmusk' :
-                    sourceType === 'youtube' ? 'UC_channel_id' :
+                    sourceType === 'twitter' ? '@OpenAI or OpenAI' :
+                    sourceType === 'youtube' ? '@TwoMinutePapers or channel name' :
                     'https://example.com/feed.xml'
                   }
                 />
+                {sourceType === 'twitter' && (
+                  <p className="text-xs text-muted-foreground">
+                    Enter Twitter username (e.g., @OpenAI, @elonmusk). The @ symbol is optional.
+                  </p>
+                )}
+                {sourceType === 'youtube' && (
+                  <div className="space-y-2">
+                    <p className="text-xs text-green-600 dark:text-green-400 font-medium">
+                      ✨ No API key needed! Works via RSS feed
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Enter any of these formats:
+                    </p>
+                    <ul className="text-xs text-muted-foreground list-disc list-inside space-y-1">
+                      <li><strong>Channel Handle:</strong> @TwoMinutePapers or TwoMinutePapers</li>
+                      <li><strong>Channel ID:</strong> UCxxxxxx (if you have it)</li>
+                      <li><strong>Channel URL:</strong> youtube.com/@channelname</li>
+                    </ul>
+                    <p className="text-xs text-blue-600 dark:text-blue-400">
+                      💡 Easiest way: Just type the channel name or handle (e.g., @TwoMinutePapers, @LexFridman)
+                    </p>
+                  </div>
+                )}
+                {sourceType === 'rss' && (
+                  <p className="text-xs text-muted-foreground">
+                    Enter the full RSS feed URL (e.g., https://blog.example.com/feed.xml)
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -284,6 +312,37 @@ export default function SourcesPage() {
           </DialogContent>
         </Dialog>
       </div>
+
+      {/* Info Banner */}
+      <Card className="mb-6 border-blue-200 bg-blue-50 dark:border-blue-900 dark:bg-blue-950/30">
+        <div className="p-6">
+          <div className="flex items-start gap-3">
+            <div className="text-blue-600 dark:text-blue-400 mt-0.5">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+            </div>
+            <div className="flex-1">
+              <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                Source Configuration Guide
+              </h3>
+              <div className="text-sm text-blue-800 dark:text-blue-200 space-y-2">
+                <div>
+                  <strong>✅ Twitter:</strong> API is configured! Add any Twitter handle (e.g., @OpenAI, @elonmusk)
+                </div>
+                <div>
+                  <strong>✨ YouTube:</strong> No API needed! Just type channel names (e.g., @TwoMinutePapers, @LexFridman). Works via RSS!
+                </div>
+                <div>
+                  <strong>📰 RSS:</strong> Add any RSS feed URL to pull content from blogs, news sites, or podcasts.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Card>
 
       {/* Sources List */}
       {sources.length === 0 ? (
@@ -359,6 +418,7 @@ export default function SourcesPage() {
     </div>
   )
 }
+
 
 
 

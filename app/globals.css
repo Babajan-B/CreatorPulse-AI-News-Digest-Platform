@@ -4,99 +4,99 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Updated color scheme for purple-to-indigo gradient theme */
-  --background: oklch(0.99 0 0);
-  --foreground: oklch(0.15 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.15 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.15 0 0);
+  /* Rytr-inspired orange theme with modern color palette */
+  --background: #FFF8F0; /* off-white */
+  --foreground: #111111; /* black text */
+  --card: #FFFFFF; /* white */
+  --card-foreground: #111111; /* black text */
+  --popover: #FFFFFF; /* white */
+  --popover-foreground: #111111; /* black text */
 
-  /* Purple-to-indigo gradient colors */
-  --primary: oklch(0.55 0.25 290); /* Purple */
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.96 0.01 290);
-  --secondary-foreground: oklch(0.15 0 0);
+  /* Primary orange theme */
+  --primary: #E34C2D; /* primary orange */
+  --primary-foreground: #FFFFFF; /* white text */
+  --secondary: #F7C6D9; /* soft pink */
+  --secondary-foreground: #111111; /* black text */
 
-  --muted: oklch(0.96 0.005 270);
-  --muted-foreground: oklch(0.5 0.01 270);
-  --accent: oklch(0.55 0.22 270); /* Indigo */
-  --accent-foreground: oklch(1 0 0);
+  --muted: #E8E1DA; /* light border */
+  --muted-foreground: #111111; /* black text */
+  --accent: #E1C8FF; /* lavender */
+  --accent-foreground: #111111; /* black text */
 
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(1 0 0);
+  --destructive: #CC4328; /* dark orange */
+  --destructive-foreground: #FFFFFF; /* white text */
 
-  --border: oklch(0.93 0.005 270);
-  --input: oklch(0.93 0.005 270);
-  --ring: oklch(0.55 0.25 290);
+  --border: #E8E1DA; /* light border */
+  --input: #E8E1DA; /* light border */
+  --ring: #E34C2D; /* primary orange */
 
   /* Quality score colors */
-  --quality-high: oklch(0.65 0.2 145); /* Green */
-  --quality-medium: oklch(0.7 0.18 240); /* Blue */
-  --quality-low: oklch(0.75 0.18 85); /* Yellow */
+  --quality-high: #22c55e; /* Green */
+  --quality-medium: #3b82f6; /* Blue */
+  --quality-low: #f59e0b; /* Yellow */
 
-  --chart-1: oklch(0.55 0.25 290);
-  --chart-2: oklch(0.55 0.22 270);
-  --chart-3: oklch(0.65 0.2 145);
-  --chart-4: oklch(0.7 0.18 240);
-  --chart-5: oklch(0.75 0.18 85);
+  --chart-1: #E34C2D; /* primary orange */
+  --chart-2: #CC4328; /* dark orange */
+  --chart-3: #F7C6D9; /* soft pink */
+  --chart-4: #E1C8FF; /* lavender */
+  --chart-5: #1B0F0D; /* dark brown */
 
   --radius: 0.75rem; /* 12px */
 
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.55 0.25 290);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.96 0.01 290);
-  --sidebar-accent-foreground: oklch(0.15 0 0);
-  --sidebar-border: oklch(0.93 0.005 270);
-  --sidebar-ring: oklch(0.55 0.25 290);
+  --sidebar: #FFF8F0; /* off-white */
+  --sidebar-foreground: #111111; /* black text */
+  --sidebar-primary: #E34C2D; /* primary orange */
+  --sidebar-primary-foreground: #FFFFFF; /* white text */
+  --sidebar-accent: #F7C6D9; /* soft pink */
+  --sidebar-accent-foreground: #111111; /* black text */
+  --sidebar-border: #E8E1DA; /* light border */
+  --sidebar-ring: #E34C2D; /* primary orange */
 }
 
 .dark {
-  /* Dark mode colors with purple-indigo theme */
-  --background: oklch(0.12 0.01 270);
-  --foreground: oklch(0.97 0.005 270);
-  --card: oklch(0.15 0.01 270);
-  --card-foreground: oklch(0.97 0.005 270);
-  --popover: oklch(0.15 0.01 270);
-  --popover-foreground: oklch(0.97 0.005 270);
+  /* Dark mode with orange theme */
+  --background: #1B0F0D; /* dark brown */
+  --foreground: #FFFFFF; /* white text */
+  --card: #2A1A17; /* slightly lighter brown */
+  --card-foreground: #FFFFFF; /* white text */
+  --popover: #2A1A17; /* slightly lighter brown */
+  --popover-foreground: #FFFFFF; /* white text */
 
-  --primary: oklch(0.65 0.25 290); /* Lighter purple for dark mode */
-  --primary-foreground: oklch(0.12 0.01 270);
-  --secondary: oklch(0.2 0.02 290);
-  --secondary-foreground: oklch(0.97 0.005 270);
+  --primary: #E34C2D; /* primary orange */
+  --primary-foreground: #FFFFFF; /* white text */
+  --secondary: #CC4328; /* dark orange */
+  --secondary-foreground: #FFFFFF; /* white text */
 
-  --muted: oklch(0.2 0.02 270);
-  --muted-foreground: oklch(0.65 0.02 270);
-  --accent: oklch(0.6 0.22 270); /* Lighter indigo for dark mode */
-  --accent-foreground: oklch(0.12 0.01 270);
+  --muted: #3A2A27; /* darker brown */
+  --muted-foreground: #E8E1DA; /* light border */
+  --accent: #F7C6D9; /* soft pink */
+  --accent-foreground: #1B0F0D; /* dark brown */
 
-  --destructive: oklch(0.55 0.25 27);
-  --destructive-foreground: oklch(0.97 0.005 270);
+  --destructive: #CC4328; /* dark orange */
+  --destructive-foreground: #FFFFFF; /* white text */
 
-  --border: oklch(0.25 0.02 270);
-  --input: oklch(0.25 0.02 270);
-  --ring: oklch(0.65 0.25 290);
+  --border: #3A2A27; /* darker brown */
+  --input: #3A2A27; /* darker brown */
+  --ring: #E34C2D; /* primary orange */
 
-  --quality-high: oklch(0.7 0.2 145);
-  --quality-medium: oklch(0.75 0.18 240);
-  --quality-low: oklch(0.8 0.18 85);
+  --quality-high: #22c55e; /* Green */
+  --quality-medium: #3b82f6; /* Blue */
+  --quality-low: #f59e0b; /* Yellow */
 
-  --chart-1: oklch(0.65 0.25 290);
-  --chart-2: oklch(0.6 0.22 270);
-  --chart-3: oklch(0.7 0.2 145);
-  --chart-4: oklch(0.75 0.18 240);
-  --chart-5: oklch(0.8 0.18 85);
+  --chart-1: #E34C2D; /* primary orange */
+  --chart-2: #CC4328; /* dark orange */
+  --chart-3: #F7C6D9; /* soft pink */
+  --chart-4: #E1C8FF; /* lavender */
+  --chart-5: #FFF8F0; /* off-white */
 
-  --sidebar: oklch(0.15 0.01 270);
-  --sidebar-foreground: oklch(0.97 0.005 270);
-  --sidebar-primary: oklch(0.65 0.25 290);
-  --sidebar-primary-foreground: oklch(0.12 0.01 270);
-  --sidebar-accent: oklch(0.2 0.02 290);
-  --sidebar-accent-foreground: oklch(0.97 0.005 270);
-  --sidebar-border: oklch(0.25 0.02 270);
-  --sidebar-ring: oklch(0.65 0.25 290);
+  --sidebar: #1B0F0D; /* dark brown */
+  --sidebar-foreground: #FFFFFF; /* white text */
+  --sidebar-primary: #E34C2D; /* primary orange */
+  --sidebar-primary-foreground: #FFFFFF; /* white text */
+  --sidebar-accent: #CC4328; /* dark orange */
+  --sidebar-accent-foreground: #FFFFFF; /* white text */
+  --sidebar-border: #3A2A27; /* darker brown */
+  --sidebar-ring: #E34C2D; /* primary orange */
 }
 
 @theme inline {
@@ -165,4 +165,66 @@
 
 .animate-scroll:hover {
   animation-play-state: paused;
+}
+
+/* Rytr-inspired design elements */
+.hero-gradient {
+  background: linear-gradient(135deg, #E34C2D 0%, #CC4328 100%);
+}
+
+.card-elevated {
+  box-shadow: 0 10px 25px -5px rgba(227, 76, 45, 0.1), 0 10px 10px -5px rgba(227, 76, 45, 0.04);
+}
+
+.btn-primary {
+  background: #E34C2D;
+  color: #FFFFFF;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(227, 76, 45, 0.3);
+}
+
+.btn-primary:hover {
+  background: #CC4328;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(227, 76, 45, 0.4);
+}
+
+.btn-secondary {
+  background: #FFFFFF;
+  color: #E34C2D;
+  border: 2px solid #E34C2D;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: #E34C2D;
+  color: #FFFFFF;
+  transform: translateY(-1px);
+}
+
+.accent-highlight {
+  position: relative;
+}
+
+.accent-highlight::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #F7C6D9;
+  border-radius: 2px;
+  z-index: -1;
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #E34C2D 0%, #CC4328 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }

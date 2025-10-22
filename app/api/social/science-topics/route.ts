@@ -96,9 +96,9 @@ async function getScienceTrendingTopics(): Promise<TrendingTopic[]> {
       if (source.id === 'reddit') continue // Skip reddit as we handled it above
       
       try {
-        const posts = await rssSocialService.fetchPosts(source.url, 15)
+        const posts = await rssSocialService.fetchFeed(source.url, source.platform || 'rss', source.name, 'science')
         const sciencePosts = posts.filter(post => {
-          const text = `${post.title} ${post.summary || ''}`.toLowerCase()
+          const text = `${post.title} ${post.content || post.summary || ''}`.toLowerCase()
           return SCIENCE_KEYWORDS.some(keyword => text.includes(keyword))
         })
         
@@ -219,6 +219,7 @@ export async function GET(request: NextRequest) {
     )
   }
 }
+
 
 
 

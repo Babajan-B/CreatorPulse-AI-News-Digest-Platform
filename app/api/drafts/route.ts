@@ -85,12 +85,22 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { article_ids, max_articles = 10, include_trends = true, mode } = body;
+    const { 
+      article_ids, 
+      max_articles = 10, 
+      include_trends = true, 
+      mode,
+      content_type,
+      customization 
+    } = body;
+
+    // Check if this is a new-style request (with content_type) or old-style
+    const isNewStyle = !!content_type;
 
     // Get user's preferred mode from settings if not provided
     let userMode = mode || 'ai_news';
     
-    if (!mode) {
+    if (!mode && !isNewStyle) {
       const { data: settings } = await supabaseClient
         .from('user_settings')
         .select('preferred_mode')
@@ -101,6 +111,32 @@ export async function POST(request: NextRequest) {
     }
 
     const generator = getDraftGenerator();
+    
+    // Use new content generation if content_type is provided
+    if (isNewStyle) {
+      const result = await generator.generateContentDraft(user.id, {
+        articleIds: article_ids,
+        contentType: content_type,
+        customization: customization || {
+          tone: 'professional',
+          length: 'medium',
+          targetAudience: [],
+          includeTrends: true,
+          includeStats: true,
+          includeCTA: true,
+          ctaType: 'subscribe',
+          useVoiceMatching: true,
+        },
+      });
+
+      if (!result.success) {
+        return NextResponse.json({ success: false, error: result.error }, { status: 400 });
+      }
+
+      return NextResponse.json({ success: true, draft: result.draft }, { status: 201 });
+    }
+
+    // Fall back to old-style newsletter generation
     const result = await generator.generateDraft(user.id, {
       articleIds: article_ids,
       maxArticles: max_articles,

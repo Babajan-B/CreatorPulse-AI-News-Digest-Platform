@@ -468,6 +468,155 @@ export class DraftGenerator {
       return false;
     }
   }
+
+  /**
+   * Generate content draft with specific content type and customization
+   * NEW METHOD for platform-specific content generation
+   */
+  async generateContentDraft(
+    userId: string,
+    options: {
+      articleIds: string[];
+      contentType: string;
+      customization: any;
+    }
+  ): Promise<{ success: boolean; draft?: any; error?: string }> {
+    try {
+      const { articleIds, contentType, customization } = options;
+
+      // Import content templates V2 (improved formatting)
+      const { contentTemplates } = await import('./content-templates-v2');
+      const { getLLMService } = await import('./llm-service');
+      
+      const template = contentTemplates[contentType];
+      if (!template) {
+        return { success: false, error: `Unknown content type: ${contentType}` };
+      }
+
+      // Fetch specified articles - support both UUID IDs and URLs
+      console.log('🔍 Looking up articles with IDs:', articleIds);
+      
+      // First try by UUID from feed_items table
+      let { data: articles, error: articlesError } = await supabase
+        .from('feed_items')
+        .select('*')
+        .in('id', articleIds)
+        .order('published_at', { ascending: false });
+
+      // If no articles found by ID, try by URL (for backward compatibility)
+      if (!articles || articles.length === 0) {
+        console.log('🔄 No articles found by ID, trying by URL...');
+        const result = await supabase
+          .from('feed_items')
+          .select('*')
+          .in('url', articleIds)
+          .order('published_at', { ascending: false });
+        
+        articles = result.data;
+        articlesError = result.error;
+      }
+      
+      // Map feed_items fields to expected article format
+      if (articles && articles.length > 0) {
+        articles = articles.map((item: any) => ({
+          id: item.id,
+          title: item.title,
+          summary: item.summary,
+          url: item.url,
+          source: item.source_name,
+          published_at: item.published_at,
+          author: item.author,
+          image_url: item.image_url,
+          tags: item.tags || [],
+        }));
+      }
+
+      if (articlesError) {
+        console.error('❌ Database error fetching articles:', articlesError);
+        return { success: false, error: `Database error: ${articlesError.message}` };
+      }
+
+      if (!articles || articles.length === 0) {
+        console.error('❌ No articles found. Searched for:', articleIds);
+        return { success: false, error: `No articles found. Please select articles that are in the database.` };
+      }
+
+      console.log(`📝 Generating ${contentType} with ${articles.length} selected articles`);
+
+      // Get voice profile if voice matching is enabled
+      let voiceContext = '';
+      if (customization.useVoiceMatching) {
+        const trainer = getVoiceTrainer();
+        const profile = await trainer.getVoiceProfile(userId);
+        if (profile) {
+          voiceContext = `Write in a ${profile.formality_level} style, using ${profile.complexity_level} language complexity.`;
+        }
+      }
+
+      // Generate content using the template's prompt
+      const prompt = template.generatePrompt(
+        articles,
+        customization,
+        customization.personalInsights || voiceContext
+      );
+
+      const llm = getLLMService();
+      const generatedContent = await llm.complete(prompt, {
+        maxTokens: template.maxLength,
+        temperature: customization.tone === 'enthusiastic' ? 0.9 : customization.tone === 'professional' ? 0.7 : 0.8,
+      });
+
+      // Format the output
+      const formattedContent = template.formatOutput(
+        generatedContent,
+        articles,
+        customization
+      );
+
+      // Create draft in database
+      const contentTypeName = contentType.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+      const draft = {
+        user_id: userId,
+        title: `${contentTypeName} - ${new Date().toLocaleDateString()}`,
+        content_intro: formattedContent,
+        curated_articles: articles.map((a: any) => ({
+          article_id: a.id,
+          title: a.title,
+          summary: a.summary,
+          url: a.url,
+          source: a.source,
+          bullet_points: [],
+          hashtags: [],
+        })),
+        closing: `Generated with ${customization.tone} tone for ${customization.targetAudience.join(', ') || 'your audience'}`,
+        status: 'pending' as const,
+        generated_at: new Date().toISOString(),
+        metadata: {
+          content_type: contentType,
+          customization,
+          article_count: articles.length,
+        },
+      };
+
+      const { data: savedDraft, error: saveError } = await supabase
+        .from('newsletter_drafts')
+        .insert(draft)
+        .select()
+        .single();
+
+      if (saveError) {
+        console.error('Error saving draft:', saveError);
+        return { success: false, error: 'Failed to save draft' };
+      }
+
+      console.log(`✅ ${contentType} draft generated successfully`);
+
+      return { success: true, draft: savedDraft };
+    } catch (error: any) {
+      console.error('Error in generateContentDraft:', error);
+      return { success: false, error: error.message || 'Failed to generate content' };
+    }
+  }
 }
 
 // Singleton instance

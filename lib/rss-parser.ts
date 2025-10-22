@@ -163,6 +163,7 @@ function extractTags(item: any, sourceName: string): string[] {
 // Parse a single RSS feed
 export async function parseRSSFeed(url: string, sourceName: string): Promise<RSSArticle[]> {
   try {
+    console.log(`📡 Fetching: ${sourceName}`);
     const feed = await parser.parseURL(url);
     
     const articles: RSSArticle[] = feed.items.map((item, index) => ({
@@ -179,9 +180,10 @@ export async function parseRSSFeed(url: string, sourceName: string): Promise<RSS
       qualityScore: calculateQualityScore(item, sourceName),
     }));
     
+    console.log(`✅ ${sourceName}: ${articles.length} articles`);
     return articles;
-  } catch (error) {
-    console.error(`Error parsing RSS feed from ${sourceName}:`, error);
+  } catch (error: any) {
+    console.error(`❌ ${sourceName} FAILED: ${error.message}`);
     return [];
   }
 }
@@ -193,12 +195,15 @@ export async function fetchAllRSSFeeds(limit?: number): Promise<RSSArticle[]> {
     source => source.type === 'rss' && source.enabled
   );
   
-  console.log(`Fetching ${rssSources.length} RSS feeds...`);
+  console.log(`\n🔄 Fetching ${rssSources.length} RSS feeds...\n`);
   
   // Fetch all feeds in parallel with timeout
-  const fetchPromises = rssSources.map(async (source) => {
+  const fetchPromises = rssSources.map(async (source, index) => {
     const timeoutPromise = new Promise<RSSArticle[]>((resolve) => {
-      setTimeout(() => resolve([]), 10000); // 10 second timeout
+      setTimeout(() => {
+        console.error(`⏱️ ${source.name}: TIMEOUT (10s)`);
+        resolve([]);
+      }, 10000); // 10 second timeout
     });
     
     const fetchPromise = parseRSSFeed(source.url, source.name);
@@ -208,6 +213,10 @@ export async function fetchAllRSSFeeds(limit?: number): Promise<RSSArticle[]> {
   
   const results = await Promise.all(fetchPromises);
   const allArticles = results.flat();
+  
+  // Count successful feeds
+  const successfulFeeds = results.filter(r => r.length > 0).length;
+  console.log(`\n📊 Feed Results: ${successfulFeeds}/${rssSources.length} feeds successful\n`);
   
   // FILTER: Only articles from last 7 days
   const sevenDaysAgo = new Date();

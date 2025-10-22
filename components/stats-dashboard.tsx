@@ -32,7 +32,7 @@ export function StatsDashboard({ totalArticles, averageQuality, topTopics, activ
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-medium text-muted-foreground">Avg Quality</p>
-            <p className="mt-2 text-3xl font-bold tracking-tight">{averageQuality.toFixed(1)}</p>
+            <p className="mt-2 text-3xl font-bold tracking-tight">{isNaN(averageQuality) ? '0.0' : averageQuality.toFixed(1)}</p>
           </div>
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10 text-accent transition-colors group-hover:bg-accent/20">
             <Star className="h-6 w-6" />

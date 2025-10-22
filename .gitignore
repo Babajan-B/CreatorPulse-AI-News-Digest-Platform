@@ -116,9 +116,6 @@ temp/
 *.backup
 *.bak
 
-# Documentation backup folder
-docs-backup/
-
 # Sensitive documentation (contains actual credentials)
 ENV_SETUP.md
 MAILERSEND_INTEGRATED.md

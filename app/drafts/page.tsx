@@ -142,29 +142,39 @@ export default function DraftsPage() {
       {/* Header */}
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="mb-2 text-4xl font-bold tracking-tight">Newsletter Drafts</h1>
+          <h1 className="mb-2 text-4xl font-bold tracking-tight">Content Drafts</h1>
           <p className="text-lg text-muted-foreground">
-            AI-generated drafts in your unique writing style
+            AI-generated content in your unique writing style
           </p>
         </div>
         
-        <Button
-          onClick={handleGenerateDraft}
-          disabled={generating}
-          className="gap-2 bg-gradient-to-r from-primary to-accent"
-        >
-          {generating ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin" />
-              Generating...
-            </>
-          ) : (
-            <>
-              <Plus className="h-4 w-4" />
-              Generate New Draft
-            </>
-          )}
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            onClick={handleGenerateDraft}
+            disabled={generating}
+            variant="outline"
+            className="gap-2"
+          >
+            {generating ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Quick Generate...
+              </>
+            ) : (
+              <>
+                <Plus className="h-4 w-4" />
+                Quick Generate
+              </>
+            )}
+          </Button>
+          <Button
+            onClick={() => router.push('/drafts/create')}
+            className="gap-2 bg-gradient-to-r from-primary to-accent"
+          >
+            <Plus className="h-4 w-4" />
+            Create New Content
+          </Button>
+        </div>
       </div>
 
       {/* Stats Cards */}

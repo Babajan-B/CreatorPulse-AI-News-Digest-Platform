@@ -133,6 +133,105 @@
       "url": "https://blog.ml.cmu.edu/feed/",
       "enabled": true,
       "parameters": {}
+    },
+    {
+      "name": "AI Business",
+      "type": "rss",
+      "url": "https://aibusiness.com/rss.xml",
+      "enabled": true,
+      "parameters": {}
+    },
+    {
+      "name": "OpenAI Blog",
+      "type": "rss",
+      "url": "https://openai.com/blog/rss.xml",
+      "enabled": true,
+      "parameters": {}
+    },
+    {
+      "name": "AI News - Artificial Intelligence News",
+      "type": "rss",
+      "url": "https://www.artificialintelligence-news.com/feed/rss/",
+      "enabled": true,
+      "parameters": {}
+    },
+    {
+      "name": "MIT Technology Review AI",
+      "type": "rss",
+      "url": "https://www.technologyreview.com/topic/artificial-intelligence/feed",
+      "enabled": true,
+      "parameters": {}
+    },
+    {
+      "name": "Stanford HAI News",
+      "type": "rss",
+      "url": "https://hai.stanford.edu/news/rss.xml",
+      "enabled": true,
+      "parameters": {}
+    },
+    {
+      "name": "Ars Technica AI",
+      "type": "rss",
+      "url": "https://feeds.arstechnica.com/arstechnica/technology-lab",
+      "enabled": true,
+      "parameters": {}
+    },
+    {
+      "name": "NVIDIA Blog",
+      "type": "rss",
+      "url": "https://blogs.nvidia.com/feed/",
+      "enabled": true,
+      "parameters": {}
+    },
+    {
+      "name": "Microsoft Research Blog",
+      "type": "rss",
+      "url": "https://www.microsoft.com/en-us/research/feed/",
+      "enabled": true,
+      "parameters": {}
+    },
+    {
+      "name": "Meta AI Blog",
+      "type": "rss",
+      "url": "https://ai.meta.com/blog/rss/",
+      "enabled": true,
+      "parameters": {}
+    },
+    {
+      "name": "PyTorch Blog",
+      "type": "rss",
+      "url": "https://pytorch.org/blog/feed.xml",
+      "enabled": true,
+      "parameters": {}
+    },
+    {
+      "name": "Papers with Code",
+      "type": "rss",
+      "url": "https://paperswithcode.com/rss.xml",
+      "enabled": false,
+      "parameters": {},
+      "comment": "Disabled by default - very high volume"
+    },
+    {
+      "name": "AI Ethics Lab",
+      "type": "rss",
+      "url": "https://www.aiethicslab.com/rss.xml",
+      "enabled": true,
+      "parameters": {}
+    },
+    {
+      "name": "AI Impacts",
+      "type": "rss",
+      "url": "https://aiimpacts.org/feed/",
+      "enabled": true,
+      "parameters": {}
+    },
+    {
+      "name": "Synced AI Technology & Industry Review",
+      "type": "rss",
+      "url": "https://syncedreview.com/feed/",
+      "enabled": true,
+      "parameters": {}
     }
   ]
 }

@@ -88,6 +88,8 @@ export class RedditService {
           'User-Agent': this.userAgent,
           'Accept': 'application/json',
         },
+        // Add timeout and ignore SSL issues for development
+        signal: AbortSignal.timeout(10000), // 10 second timeout
       });
 
       if (!response.ok) {

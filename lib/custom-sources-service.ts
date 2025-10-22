@@ -105,7 +105,7 @@ export class CustomSourcesService {
         return { success: false, error: validation.error };
       }
 
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAdmin
         .from('user_sources')
         .insert({
           user_id: userId,
@@ -137,7 +137,7 @@ export class CustomSourcesService {
     sourceId: string,
     updates: Partial<Pick<CustomSource, 'source_name' | 'priority_weight' | 'enabled'>>
   ): Promise<{ success: boolean; error?: string }> {
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('user_sources')
       .update(updates)
       .eq('id', sourceId);
@@ -154,7 +154,7 @@ export class CustomSourcesService {
    * Delete a source
    */
   async deleteSource(sourceId: string): Promise<{ success: boolean; error?: string }> {
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('user_sources')
       .delete()
       .eq('id', sourceId);
@@ -189,15 +189,27 @@ export class CustomSourcesService {
           return { valid: true, suggested_name: `@${username}` };
 
         case 'youtube':
-          if (!this.youtubeService.isConfigured()) {
-            return { valid: false, error: 'YouTube API not configured' };
+          // YouTube now works via RSS - no API needed!
+          // Accept channel ID (UC...), channel handle (@username), or channel name
+          let channelId = identifier;
+          
+          // Extract channel ID from various formats
+          if (identifier.includes('youtube.com/channel/')) {
+            channelId = identifier.split('youtube.com/channel/')[1].split('/')[0].split('?')[0];
+          } else if (identifier.includes('youtube.com/@')) {
+            // For @handles, we'll use the handle directly
+            channelId = identifier.split('youtube.com/@')[1].split('/')[0].split('?')[0];
+          } else if (identifier.startsWith('@')) {
+            // Already a handle
+            channelId = identifier;
           }
-          const ytResult = await this.youtubeService.fetchChannelVideos(identifier, { maxResults: 1 });
-          if (ytResult.error) {
-            return { valid: false, error: ytResult.error };
+          
+          // Validate it's not empty
+          if (!channelId || channelId.trim() === '') {
+            return { valid: false, error: 'Please provide a valid YouTube channel' };
           }
-          const channelName = ytResult.videos[0]?.channelTitle;
-          return { valid: true, suggested_name: channelName };
+          
+          return { valid: true, suggested_name: channelId };
 
         case 'rss':
           try {
@@ -237,7 +249,7 @@ export class CustomSourcesService {
         allContent.push(...content);
 
         // Update last_fetched_at
-        await supabase
+        await supabaseAdmin
           .from('user_sources')
           .update({ last_fetched_at: new Date().toISOString(), fetch_error: null })
           .eq('id', source.id);
@@ -245,7 +257,7 @@ export class CustomSourcesService {
         console.error(`Error fetching from source ${source.id}:`, error);
         
         // Update fetch_error
-        await supabase
+        await supabaseAdmin
           .from('user_sources')
           .update({ fetch_error: error.message })
           .eq('id', source.id);
@@ -306,33 +318,96 @@ export class CustomSourcesService {
   }
 
   /**
-   * Fetch from YouTube
+   * Fetch from YouTube via RSS (no API key needed!)
    */
   private async fetchFromYouTube(source: CustomSource): Promise<FetchedContent[]> {
-    const result = await this.youtubeService.fetchChannelVideos(source.source_identifier, {
-      maxResults: 10,
-    });
+    try {
+      let channelId = source.source_identifier;
+      let rssUrl: string;
+      
+      // Extract handle from full YouTube URL if present
+      console.log(`🔍 Processing YouTube identifier: ${channelId}`);
+      if (channelId.includes('youtube.com/@')) {
+        const match = channelId.match(/youtube\.com\/@([^\/\?]+)/);
+        if (match && match[1]) {
+          channelId = `@${match[1]}`;
+          console.log(`✅ Extracted handle: ${channelId}`);
+        }
+      } else if (channelId.includes('youtube.com/channel/')) {
+        const match = channelId.match(/youtube\.com\/channel\/([^\/\?]+)/);
+        if (match && match[1]) {
+          channelId = match[1];
+          console.log(`✅ Extracted channel ID: ${channelId}`);
+        }
+      }
+      
+      // Build RSS URL based on identifier format
+      if (channelId.startsWith('UC')) {
+        // Channel ID format
+        rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
+        console.log(`📺 Using channel ID format: ${rssUrl}`);
+      } else if (channelId.startsWith('@') || !channelId.includes('/')) {
+        // Handle or username format - need to fetch channel page to get ID
+        const handle = channelId.startsWith('@') ? channelId : `@${channelId}`;
+        console.log(`🔍 Processing handle: ${handle}`);
+        
+        // Try to fetch the channel page to extract channel ID
+        try {
+          const channelUrl = `https://www.youtube.com/${handle}`;
+          console.log(`🌐 Fetching channel page: ${channelUrl}`);
+          const response = await fetch(channelUrl, {
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            },
+          });
+          const html = await response.text();
+          
+          // Extract channel ID from page
+          const match = html.match(/"channelId":"(UC[^"]+)"/);
+          if (match && match[1]) {
+            channelId = match[1];
+            rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
+            console.log(`✅ Found channel ID: ${channelId}, RSS URL: ${rssUrl}`);
+          } else {
+            console.log(`❌ Could not find channel ID in page HTML`);
+            throw new Error('Could not find channel ID');
+          }
+        } catch (error) {
+          console.log(`❌ Error fetching channel page: ${error}`);
+          throw new Error(`Could not fetch channel ${handle}. Please use Channel ID (UC...) instead.`);
+        }
+      } else {
+        throw new Error('Invalid YouTube identifier. Use Channel ID (UC...) or handle (@username)');
+      }
 
-    if (result.error) {
-      throw new Error(result.error);
+      // Fetch RSS feed
+      const feed = await this.rssParser.parseURL(rssUrl);
+      
+      return (feed.items || []).slice(0, 10).map((item) => {
+        // Extract video ID from link
+        const videoId = item.link?.includes('watch?v=') 
+          ? item.link.split('watch?v=')[1].split('&')[0]
+          : '';
+        
+        return {
+          title: item.title || 'Untitled Video',
+          content: item.contentSnippet || item.content || item.description || '',
+          url: item.link || '',
+          source_type: 'youtube',
+          source_name: source.source_name || feed.title || 'YouTube Channel',
+          author: item.creator || feed.title || 'YouTube Creator',
+          published_at: item.pubDate ? new Date(item.pubDate) : new Date(),
+          image_url: item['media:group']?.['media:thumbnail']?.[0]?.['$']?.url || 
+                     `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+          metadata: {
+            video_id: videoId,
+            channel_name: feed.title,
+          },
+        };
+      });
+    } catch (error: any) {
+      throw new Error(`Failed to fetch YouTube channel: ${error.message}`);
     }
-
-    return result.videos.map((video) => ({
-      title: video.title,
-      content: video.description,
-      url: video.url,
-      source_type: 'youtube',
-      source_name: source.source_name || video.channelTitle,
-      author: video.channelTitle,
-      published_at: new Date(video.publishedAt),
-      image_url: video.thumbnailUrl,
-      metadata: {
-        video_id: video.id,
-        view_count: video.viewCount || 0,
-        like_count: video.likeCount || 0,
-        duration: video.duration,
-      },
-    }));
   }
 
   /**

@@ -74,13 +74,13 @@ export function Navigation() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="group flex items-center gap-2.5 transition-opacity hover:opacity-90">
           <div className="relative">
-            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary via-accent to-primary opacity-0 blur-md transition-opacity duration-300 group-hover:opacity-50" />
-            <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary via-accent to-primary shadow-lg">
-              <Sparkles className="h-5 w-5 text-primary-foreground" strokeWidth={2.5} />
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#E34C2D] to-[#CC4328] opacity-0 blur-md transition-opacity duration-300 group-hover:opacity-50" />
+            <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#E34C2D] to-[#CC4328] shadow-lg">
+              <Sparkles className="h-5 w-5 text-white" strokeWidth={2.5} />
             </div>
           </div>
           <div className="flex flex-col">
-            <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-xl font-bold tracking-tight text-transparent">
+            <span className="text-gradient text-xl font-bold tracking-tight">
               CreatorPulse
             </span>
             <span className="text-[10px] font-medium text-muted-foreground">AI Intelligence Hub</span>
@@ -94,7 +94,7 @@ export function Navigation() {
               <Button
                 variant={pathname === item.href ? "secondary" : "ghost"}
                 size="sm"
-                className="text-sm font-medium"
+                className={`text-sm font-medium ${pathname === item.href ? 'text-primary' : 'text-foreground hover:text-primary'}`}
               >
                 {item.label}
               </Button>
@@ -172,7 +172,7 @@ export function Navigation() {
                   variant="default"
                   size="sm"
                   asChild
-                  className="bg-gradient-to-r from-primary to-accent hover:opacity-90"
+                  className="btn-primary"
                 >
                   <Link href="/login">
                     <LogIn className="mr-2 h-4 w-4" />
