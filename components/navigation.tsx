@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { Moon, Sun, Sparkles, LogIn, LogOut, User as UserIcon, Rss, Mic, BarChart3 } from "lucide-react"
+import { Moon, Sun, Sparkles, LogIn, LogOut, User as UserIcon, Rss, Mic, BarChart3, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -64,6 +64,7 @@ export function Navigation() {
     { href: "/", label: "Digest" },
     { href: "/drafts", label: "Drafts" },
     { href: "/social", label: "Social" },
+    { href: "/ai-creators", label: "AI Heroes" },
     { href: "/analytics", label: "Analytics" },
     { href: "/history", label: "History" },
     { href: "/settings", label: "Settings" },
@@ -88,18 +89,51 @@ export function Navigation() {
         </Link>
 
         {/* Navigation Links */}
-        <div className="hidden items-center gap-1 md:flex">
-          {navItems.map((item) => (
-            <Link key={item.href} href={item.href}>
-              <Button
-                variant={pathname === item.href ? "secondary" : "ghost"}
-                size="sm"
-                className={`text-sm font-medium ${pathname === item.href ? 'text-primary' : 'text-foreground hover:text-primary'}`}
-              >
-                {item.label}
-              </Button>
-            </Link>
-          ))}
+        <div className="hidden items-center gap-2 md:flex">
+          {navItems.map((item) => {
+            const isActive = pathname === item.href
+            return (
+              <Link key={item.href} href={item.href}>
+                <div className="relative group">
+                  {/* Glass Button Effect */}
+                  <div className={`
+                    relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ease-out
+                    ${isActive 
+                      ? 'bg-white/20 dark:bg-white/10 backdrop-blur-md border border-white/30 dark:border-white/20 shadow-lg shadow-black/10 dark:shadow-white/5' 
+                      : 'bg-white/5 dark:bg-white/5 backdrop-blur-sm border border-white/10 dark:border-white/5 hover:bg-white/10 dark:hover:bg-white/10 hover:border-white/20 dark:hover:border-white/10'
+                    }
+                    ${isActive ? 'scale-105' : 'hover:scale-102'}
+                  `}>
+                    {/* Zoom Magnifier Effect for Active State */}
+                    {isActive && (
+                      <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-[#E34C2D]/20 to-[#CC4328]/20 animate-pulse" />
+                    )}
+                    
+                    {/* Magnifier Icon for Active State */}
+                    {isActive && (
+                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-[#E34C2D] to-[#CC4328] rounded-full flex items-center justify-center shadow-lg">
+                        <Search className="w-2.5 h-2.5 text-white" />
+                      </div>
+                    )}
+                    
+                    {/* Text Content */}
+                    <span className={`
+                      relative z-10 transition-colors duration-200
+                      ${isActive 
+                        ? 'text-white dark:text-white font-semibold' 
+                        : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                      }
+                    `}>
+                      {item.label}
+                    </span>
+                    
+                    {/* Hover Glow Effect */}
+                    <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-[#E34C2D]/0 to-[#CC4328]/0 group-hover:from-[#E34C2D]/10 group-hover:to-[#CC4328]/10 transition-all duration-300" />
+                  </div>
+                </div>
+              </Link>
+            )
+          })}
         </div>
 
         {/* Right Side Actions */}
@@ -187,13 +221,50 @@ export function Navigation() {
 
       {/* Mobile Navigation */}
       <div className="flex items-center justify-center gap-1 border-t border-border/40 px-4 py-2 md:hidden">
-        {navItems.map((item) => (
-          <Link key={item.href} href={item.href} className="flex-1">
-            <Button variant={pathname === item.href ? "secondary" : "ghost"} size="sm" className="w-full text-xs">
-              {item.label}
-            </Button>
-          </Link>
-        ))}
+        {navItems.map((item) => {
+          const isActive = pathname === item.href
+          return (
+            <Link key={item.href} href={item.href} className="flex-1">
+              <div className="relative group">
+                {/* Glass Button Effect */}
+                <div className={`
+                  relative px-2 py-2 rounded-lg text-xs font-medium transition-all duration-300 ease-out w-full text-center
+                  ${isActive 
+                    ? 'bg-white/20 dark:bg-white/10 backdrop-blur-md border border-white/30 dark:border-white/20 shadow-lg shadow-black/10 dark:shadow-white/5' 
+                    : 'bg-white/5 dark:bg-white/5 backdrop-blur-sm border border-white/10 dark:border-white/5 hover:bg-white/10 dark:hover:bg-white/10 hover:border-white/20 dark:hover:border-white/10'
+                  }
+                  ${isActive ? 'scale-105' : 'hover:scale-102'}
+                `}>
+                  {/* Zoom Magnifier Effect for Active State */}
+                  {isActive && (
+                    <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-[#E34C2D]/20 to-[#CC4328]/20 animate-pulse" />
+                  )}
+                  
+                  {/* Magnifier Icon for Active State */}
+                  {isActive && (
+                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-br from-[#E34C2D] to-[#CC4328] rounded-full flex items-center justify-center shadow-lg">
+                      <Search className="w-1.5 h-1.5 text-white" />
+                    </div>
+                  )}
+                  
+                  {/* Text Content */}
+                  <span className={`
+                    relative z-10 transition-colors duration-200
+                    ${isActive 
+                      ? 'text-white dark:text-white font-semibold' 
+                      : 'text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                    }
+                  `}>
+                    {item.label}
+                  </span>
+                  
+                  {/* Hover Glow Effect */}
+                  <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-[#E34C2D]/0 to-[#CC4328]/0 group-hover:from-[#E34C2D]/10 group-hover:to-[#CC4328]/10 transition-all duration-300" />
+                </div>
+              </div>
+            </Link>
+          )
+        })}
       </div>
     </nav>
   )

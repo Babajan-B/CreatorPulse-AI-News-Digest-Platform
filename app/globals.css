@@ -3,6 +3,11 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Custom scale utilities for glass button effects */
+.scale-102 {
+  transform: scale(1.02);
+}
+
 :root {
   /* Rytr-inspired orange theme with modern color palette */
   --background: #FFF8F0; /* off-white */
