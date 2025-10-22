@@ -346,10 +346,10 @@ export class CustomSourcesService {
         // Channel ID format
         rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
         console.log(`📺 Using channel ID format: ${rssUrl}`);
-      } else if (channelId.startsWith('@') || !channelId.includes('/')) {
+      } else if (channelId.startsWith('@') || (!channelId.includes('/') && !channelId.startsWith('UC'))) {
         // Handle or username format - need to fetch channel page to get ID
         const handle = channelId.startsWith('@') ? channelId : `@${channelId}`;
-        console.log(`🔍 Processing handle: ${handle}`);
+        console.log(`🔍 Processing handle: ${handle} (original: ${channelId})`);
         
         // Try to fetch the channel page to extract channel ID
         try {
